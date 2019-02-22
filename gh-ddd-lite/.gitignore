@@ -1,0 +1,15 @@
+*.iml
+*.log
+*/logs/*
+logs/*
+.idea/*
+*/target/*
+*/build/*
+target/*
+.DS_Store/*
+.gradle/*
+/.idea
+/${logging.path}
+/work
+.DS_Store
+*/*.iml
