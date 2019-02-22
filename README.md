@@ -1,39 +1,34 @@
 # geekhalo-ddd
+> geekhalo ddd 项目，主要对 DDD 相关理念进行抽象，并提供多种基础服务。
+
+整个项目的设计理念遵循：
+1. 梳理 DDD 相关理念，推进 DDD 的学习；
+2. 寻求 DDD 最佳实践，分解、抽象并对其进行封装，将重用性最大化；
+3. 使用技术手段，提供对最佳实践的支持，最大程度的降低代码量。使程序员回归业务本质。
 
 #### 介绍
-{**以下是码云平台说明，您可以替换此简介**
-码云是开源中国推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用码云实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+针对 DDD 不同层次，对整体项目进行划分。
 
-#### 软件架构
-软件架构说明
+1. DDD Lite
 
+DDD Lite 部分，聚焦于战术层，对实体、值对象、领域服务、领域事件、模块、聚合、工厂、仓库的落地提供支撑。
+该部分主要由：
 
-#### 安装教程
+a. **gh-ddd-lite**
 
-1. xxxx
-2. xxxx
-3. xxxx
+该模块，主要完成对DDD的战术封装。
+
+b. **gh-ddd-lite-spring**
+
+该模块，主要提供 spring 的支持。
+
+c. **gh-ddd-lite-codegen**
+
+该模块，完成 DDD 样板代码的自动生成。
+
+d. **gh-ddd-lite-demo**
+
+demo 部分，用于展示整个模块的正确使用方式。
+
 
 #### 使用说明
-
-1. xxxx
-2. xxxx
-3. xxxx
-
-#### 参与贡献
-
-1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
-
-
-#### 码云特技
-
-1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4. [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5. 码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
