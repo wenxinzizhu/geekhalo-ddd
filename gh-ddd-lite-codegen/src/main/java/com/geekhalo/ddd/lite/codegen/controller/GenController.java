@@ -9,4 +9,6 @@ import java.lang.annotation.*;
 public @interface GenController {
     String value();
     String parentClass() default "";
+
+    String wrapperCls() default "com.geekhalo.ddd.lite.spring.mvc.ResultVo";
 }

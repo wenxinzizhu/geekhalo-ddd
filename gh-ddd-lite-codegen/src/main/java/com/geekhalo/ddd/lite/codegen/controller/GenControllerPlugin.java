@@ -36,11 +36,11 @@ public final class GenControllerPlugin
 
         GenControllerMethodMeta methodMeta = this.methodMetaParser.parse(parser.getTypeElement());
 
-        new GenControllerCreateMethodWriter(parser.getPkgName(), this::createJava,
+        new GenControllerCreateMethodWriter(parser, this::createJava,
                 methodMeta.getCreateMethods(), this.getTypeCollector()).writeTo(support.getTypeSpecBuilder());
-        new GenControllerUpdateMethodWriter(parser.getPkgName(), this::createJava,
+        new GenControllerUpdateMethodWriter(parser, this::createJava,
                 methodMeta.getUpdateMethods(), this.getTypeCollector()).writeTo(support.getTypeSpecBuilder());
-        new GenControllerSelectMethodWriter(parser.getPkgName(), this::createJava,
+        new GenControllerSelectMethodWriter(parser, this::createJava,
                 methodMeta.getQueryMethods(), getTypeCollector()).writeTo(support.getTypeSpecBuilder());
 
     }

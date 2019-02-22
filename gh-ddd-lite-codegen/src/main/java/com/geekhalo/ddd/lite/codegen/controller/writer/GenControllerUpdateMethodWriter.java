@@ -2,6 +2,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
@@ -18,8 +19,8 @@ import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.createParamListStr
 
 
 public final class GenControllerUpdateMethodWriter extends GenControllerMethodWriterSupport {
-    public GenControllerUpdateMethodWriter(String pkgName, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
-        super(pkgName, creator, methods, typeCollector);
+    public GenControllerUpdateMethodWriter(GenControllerAnnotationParser parser, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
+        super(parser, creator, methods, typeCollector);
     }
 
     @Override
@@ -51,20 +52,38 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
         builder.addParameter(idParameter);
 
         RequestBodyInfo requestBodyInfo = parseAndCreateForUpdate(executableElement, getPkgName(), getCreator());
-        if (requestBodyInfo != null){
-            builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
-                    .addAnnotation(RequestBody.class)
-                    .build());
+        if (getParser().isWrapper()){
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
 
-            builder.addStatement("this.getApplication().$L($L)",
-                    methodName,
-                    createParamListStr(requestBodyInfo.getCallParams(), "id"));
+                builder.addStatement("this.getApplication().$L($L)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams(), "id"));
+            } else {
+                builder.addStatement("this.getApplication().$L($L)",
+                        methodName,
+                        "id");
+            }
+            builder.addStatement("return $T.success(null)", ClassName.bestGuess(getParser().getWrapperCls()));
+            builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.VOID.box()));
         }else {
-            builder.addStatement("this.getApplication().$L($L)",
-                    methodName,
-                    "id");
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
+
+                builder.addStatement("this.getApplication().$L($L)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams(), "id"));
+            } else {
+                builder.addStatement("this.getApplication().$L($L)",
+                        methodName,
+                        "id");
+            }
+            builder.returns(TypeName.VOID);
         }
-        builder.returns(TypeName.VOID);
         return builder;
     }
 

@@ -2,6 +2,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.TypeSpec;
@@ -19,15 +20,17 @@ import java.util.List;
 
 @Getter(AccessLevel.PROTECTED)
 abstract class GenControllerMethodWriterSupport implements MethodWriter {
+    private final GenControllerAnnotationParser parser;
     private final String pkgName;
     private final RequestBodyInfoUtils.RequestBodyCreator creator;
     private final List<ExecutableElement> methods;
     private final TypeCollector typeCollector;
 
-    protected GenControllerMethodWriterSupport(String pkgName,
+    protected GenControllerMethodWriterSupport(GenControllerAnnotationParser parser,
                                                RequestBodyInfoUtils.RequestBodyCreator creator,
                                                List<ExecutableElement> methods, TypeCollector typeCollector) {
-        this.pkgName = pkgName;
+        this.parser = parser;
+        this.pkgName = parser.getPkgName();
         this.creator = creator;
         this.methods = methods;
         this.typeCollector = typeCollector;

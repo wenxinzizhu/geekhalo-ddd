@@ -2,6 +2,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
@@ -19,9 +20,8 @@ import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.*;
 
 public final class GenControllerSelectMethodWriter extends GenControllerMethodWriterSupport {
 
-
-    public GenControllerSelectMethodWriter(String pkgName, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
-        super(pkgName, creator, methods, typeCollector);
+    public GenControllerSelectMethodWriter(GenControllerAnnotationParser parser, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
+        super(parser, creator, methods, typeCollector);
     }
 
     @Override
@@ -61,14 +61,28 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                 .build());
 
         String returnType = executableElement.getReturnType().toString();
-        if (isOptional(returnType)){
-            builder.addStatement("return this.getApplication().getById(id).orElse(null)");
-            String type = getTypeFromOptional(returnType);
-            builder.returns(ClassName.bestGuess(type));
+        if (getParser().isWrapper()){
+            if (isOptional(returnType)){
+                builder.addStatement("return $T.success(this.getApplication().getById(id).orElse(null))",
+                        ClassName.bestGuess(getParser().getWrapperCls()));
+                String type = getTypeFromOptional(returnType);
+                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), ClassName.bestGuess(type)) );
+            }else {
+                builder.addStatement("return $T.success(this.getApplication().getById(id))",
+                        ClassName.bestGuess(getParser().getWrapperCls()));
+                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())));
+            }
         }else {
-            builder.addStatement("return this.getApplication().getById(id)");
-            builder.returns(TypeName.get(executableElement.getReturnType()));
+            if (isOptional(returnType)){
+                builder.addStatement("return this.getApplication().getById(id).orElse(null)");
+                String type = getTypeFromOptional(returnType);
+                builder.returns(ClassName.bestGuess(type));
+            }else {
+                builder.addStatement("return this.getApplication().getById(id)");
+                builder.returns(TypeName.get(executableElement.getReturnType()));
+            }
         }
+
         return builder;
     }
 
@@ -96,19 +110,38 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
-        builder.returns(TypeName.get(executableElement.getReturnType()));
+        if (getParser().isWrapper()){
+            builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()),TypeName.get(executableElement.getReturnType())));
 
-        RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
-        if (requestBodyInfo != null){
-            builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
-                    .addAnnotation(RequestBody.class)
-                    .build());
-            builder.addStatement("return this.getApplication().$L($L)",
-                    methodName,
-                    createParamListStr(requestBodyInfo.getCallParams()));
+            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
+                builder.addStatement("return $T.success(this.getApplication().$L($L))",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+            } else {
+                builder.addStatement("return $T.success(this.getApplication().$L())",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
+                        methodName);
+            }
         }else {
-            builder.addStatement("return this.getApplication().$L()",
-                    methodName);
+            builder.returns(TypeName.get(executableElement.getReturnType()));
+
+            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
+                builder.addStatement("return this.getApplication().$L($L)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+            } else {
+                builder.addStatement("return this.getApplication().$L()",
+                        methodName);
+            }
         }
 
         return builder;
@@ -130,19 +163,39 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
-        builder.returns(TypeName.get(executableElement.getReturnType()));
 
-        RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
-        if (requestBodyInfo != null){
-            builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
-                    .addAnnotation(RequestBody.class)
-                    .build());
-            builder.addStatement("return this.getApplication().$L($L)",
-                    methodName,
-                    createParamListStr(requestBodyInfo.getCallParams()));
+        if (getParser().isWrapper()){
+            builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())));
+
+            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
+                builder.addStatement("return $T.success(this.getApplication().$L($L))",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+            } else {
+                builder.addStatement("return $T.success(this.getApplication().$L())",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
+                        methodName);
+            }
         }else {
-            builder.addStatement("return this.getApplication().$L()",
-                    methodName);
+            builder.returns(TypeName.get(executableElement.getReturnType()));
+
+            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
+            if (requestBodyInfo != null) {
+                builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                        .addAnnotation(RequestBody.class)
+                        .build());
+                builder.addStatement("return this.getApplication().$L($L)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+            } else {
+                builder.addStatement("return this.getApplication().$L()",
+                        methodName);
+            }
         }
         return builder;
     }

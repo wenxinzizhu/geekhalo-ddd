@@ -2,6 +2,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
@@ -20,8 +21,10 @@ import static com.geekhalo.ddd.lite.codegen.controller.writer.PathUtils.getPathF
 import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.createParamListStr;
 
 public final class GenControllerCreateMethodWriter extends GenControllerMethodWriterSupport {
-    public GenControllerCreateMethodWriter(String pkgName, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
-        super(pkgName, creator, methods, typeCollector);
+
+
+    public GenControllerCreateMethodWriter(GenControllerAnnotationParser parser, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
+        super(parser, creator, methods, typeCollector);
     }
 
     @Override
@@ -49,9 +52,28 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
         builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                 .addAnnotation(RequestBody.class)
                 .build());
-        builder.addStatement("return this.getApplication().$L($L)", executableElement.getSimpleName().toString(), createParamListStr(requestBodyInfo.getCallParams()));
+        if (getParser().isWrapper()){
+            if( "void".equalsIgnoreCase(executableElement.getReturnType().toString())){
+                builder.addStatement("this.getApplication().$L($L)",
+                        executableElement.getSimpleName().toString(),
+                        createParamListStr(requestBodyInfo.getCallParams()));
+                builder.addStatement("return $T.success()", ClassName.bestGuess(getParser().getWrapperCls()));
 
-        builder.returns(TypeName.get(executableElement.getReturnType()));
+                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.VOID.box()));
+            }else {
+                builder.addStatement("return $T.success(this.getApplication().$L($L))",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
+                        executableElement.getSimpleName().toString(), createParamListStr(requestBodyInfo.getCallParams()));
+
+                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()),TypeName.get(executableElement.getReturnType())));
+            }
+
+        }else {
+            builder.addStatement("return this.getApplication().$L($L)", executableElement.getSimpleName().toString(), createParamListStr(requestBodyInfo.getCallParams()));
+
+            builder.returns(TypeName.get(executableElement.getReturnType()));
+        }
+
         return builder;
     }
 

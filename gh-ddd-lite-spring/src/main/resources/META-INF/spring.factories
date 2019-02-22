@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.geekhalo.ddd.lite.spring.eventbus.EventBusAutoConfiguration,\
+  com.geekhalo.ddd.lite.spring.mvc.MvcAutoConfiguration

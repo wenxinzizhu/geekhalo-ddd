@@ -18,6 +18,14 @@ public final class GenControllerAnnotationParser {
         return annotation.parentClass();
     }
 
+    public boolean isWrapper(){
+        return StringUtils.isNotEmpty(getWrapperCls());
+    }
+
+    public String getWrapperCls(){
+        return annotation.wrapperCls();
+    }
+
     public String getPkgName() {
         String controllerName = getControllerName();
         return controllerName.substring(0, controllerName.lastIndexOf("."));

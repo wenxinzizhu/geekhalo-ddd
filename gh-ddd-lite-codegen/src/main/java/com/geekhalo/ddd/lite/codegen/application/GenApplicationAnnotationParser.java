@@ -189,7 +189,7 @@ public final class GenApplicationAnnotationParser {
     }
 
     private String getDefaultRepositoryFromModel(String name) {
-        return getParentPacketName(typeElement.getEnclosingElement().toString()) + ".repository." + getSimpleName(name) + REPOSITORY;
+        return typeElement.getEnclosingElement().toString() + "." + getSimpleName(name) + REPOSITORY;
     }
 
     private String getModelNameFromRepository(String name) {
