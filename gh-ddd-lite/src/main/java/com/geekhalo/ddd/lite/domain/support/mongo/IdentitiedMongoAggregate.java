@@ -1,23 +1,21 @@
-package com.geekhalo.ddd.lite.domain.support.jpa;
+package com.geekhalo.ddd.lite.domain.support.mongo;
 
 import com.geekhalo.ddd.lite.domain.EntityId;
 import com.geekhalo.ddd.lite.domain.support.AbstractAggregate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.math.BigInteger;
 
 @MappedSuperclass
-public abstract class IdentitiedJpaAggregate<ID extends EntityId> extends AbstractAggregate<ID> {
+public abstract class IdentitiedMongoAggregate<ID extends EntityId> extends AbstractAggregate<ID> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "_id")
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PROTECTED)
     @Getter(AccessLevel.PRIVATE)
-    private Long _id;
-
+    private BigInteger _id;
 
     @Setter(AccessLevel.PROTECTED)
     private ID id;
@@ -26,5 +24,4 @@ public abstract class IdentitiedJpaAggregate<ID extends EntityId> extends Abstra
     public ID getId() {
         return id;
     }
-
 }

@@ -27,16 +27,5 @@ public abstract class IdentitiedJpaEntity<ID extends EntityId> extends AbstractE
         return id;
     }
 
-    @PrePersist
-    public void prePersist(){
-        Date now = new Date();
-        this.setCreateTime(now);
-        this.setUpdateTime(now);
-    }
-
-    @PreUpdate
-    public void preUpdate(){
-        this.setUpdateTime(new Date());
-    }
 
 }

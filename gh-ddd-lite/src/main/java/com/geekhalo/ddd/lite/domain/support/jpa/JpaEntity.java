@@ -27,16 +27,4 @@ public abstract class JpaEntity extends AbstractEntity<Long> {
         return id;
     }
 
-    @PrePersist
-    public void prePersist(){
-        Date now = new Date();
-        this.setCreateTime(now);
-        this.setUpdateTime(now);
-    }
-
-    @PreUpdate
-    public void preUpdate(){
-        this.setUpdateTime(new Date());
-    }
-
 }

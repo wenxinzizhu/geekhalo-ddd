@@ -2,9 +2,12 @@ package com.geekhalo.ddd.lite.demo.domain.news.category;
 
 import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
+import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoAggregate;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -17,9 +20,11 @@ import java.util.UUID;
 @EnableGenForAggregate
 
 @Data
-@Entity
-@Table(name = "tb_news_category2")
-public class NewsCategory extends IdentitiedJpaAggregate<NewsCategoryId> {
+//@Entity
+//@Table(name = "tb_news_category2")
+@Document
+@QueryEntity
+public class NewsCategory extends IdentitiedMongoAggregate<NewsCategoryId> {
 //
 //    @Setter(AccessLevel.PRIVATE)
 //    @Embedded

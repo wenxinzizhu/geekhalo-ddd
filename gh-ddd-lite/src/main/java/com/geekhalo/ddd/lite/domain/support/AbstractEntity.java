@@ -11,10 +11,10 @@ import lombok.Setter;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +40,17 @@ public abstract class AbstractEntity<ID> implements Entity<ID> {
     @Column(name = "update_time", nullable = false)
     @Setter(AccessLevel.PROTECTED)
     private Date updateTime;
+
+    public void prePersist(){
+        Date now = new Date();
+        this.setCreateTime(now);
+        this.setUpdateTime(now);
+    }
+
+    public void preUpdate(){
+        this.setUpdateTime(new Date());
+    }
+
 
     @QueryTransient
     public Long getCreateTimeAsMS(){

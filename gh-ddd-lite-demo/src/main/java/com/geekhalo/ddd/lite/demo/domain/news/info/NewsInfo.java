@@ -6,6 +6,7 @@ import com.geekhalo.ddd.lite.codegen.repository.Index;
 import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategory;
 import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryStatus;
 import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @EnableGenForAggregate
 
 @Index("categoryId")
-
+@QueryEntity
 @Data
 @Entity
 @Table(name = "tb_news_info")

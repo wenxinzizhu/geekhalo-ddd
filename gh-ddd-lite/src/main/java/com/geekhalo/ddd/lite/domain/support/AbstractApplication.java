@@ -45,7 +45,11 @@ public abstract class AbstractApplication implements Application {
     protected class Creator<ID, A extends Aggregate<ID>>{
         private final AggregateRepository<ID, A> aggregateRepository;
         private Supplier<A> instanceFun;
-        private Consumer<A> updater = a->{};
+        private Consumer<A> updater = a->{
+            if(a instanceof AbstractEntity){
+                ((AbstractEntity)a).prePersist();
+            }
+        };
         private ValidationHandler validationHandler = new ExceptionBasedValidationHandler();
         private DomainEventPublisher eventPublisher;
         private Consumer<A> successFun = a -> logger.info("success to save {}", a);
@@ -132,7 +136,11 @@ public abstract class AbstractApplication implements Application {
         private ID id;
         private Supplier<Optional<A>> loader;
         private Consumer<ID> onNotExistFun = id-> {throw new AggregateNotFountException(id);};
-        private Consumer<A> updater = a->{};
+        private Consumer<A> updater = a->{
+            if (a instanceof  AbstractEntity){
+                ((AbstractEntity) a).preUpdate();
+            }
+        };
         private ValidationHandler validationHandler = new ExceptionBasedValidationHandler();
         private DomainEventPublisher domainEventPublisher;
         private Consumer<Data> successFun = a -> logger.info("success to update {}", a);
@@ -248,8 +256,16 @@ public abstract class AbstractApplication implements Application {
         private final AggregateRepository<ID, A> aggregateRepository;
         private Supplier<A> instanceFun;
         private Supplier<Optional<A>> loadFun;
-        private Consumer<A> updater = a->{};
-        private Consumer<A> updaterWhenCreate = a->{};
+        private Consumer<A> updater = a->{
+            if (a instanceof AbstractEntity){
+                ((AbstractEntity) a).preUpdate();
+            }
+        };
+        private Consumer<A> updaterWhenCreate = a->{
+            if (a instanceof AbstractEntity){
+                ((AbstractEntity)a).prePersist();
+            }
+        };
         private ValidationHandler validationHandler = new ExceptionBasedValidationHandler();
         private DomainEventPublisher eventPublisher;
         private Consumer<Data> successFun = a -> logger.info("success to sync {}", a);

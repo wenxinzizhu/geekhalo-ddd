@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @MappedSuperclass
-public abstract class JpaAggregate extends AbstractAggregate<Long> implements Aggregate<Long> {
+public abstract class JpaAggregate extends AbstractAggregate<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,17 +27,4 @@ public abstract class JpaAggregate extends AbstractAggregate<Long> implements Ag
     public Long getId() {
         return id;
     }
-
-    @PrePersist
-    public void prePersist(){
-        Date now = new Date();
-        this.setCreateTime(now);
-        this.setUpdateTime(now);
-    }
-
-    @PreUpdate
-    public void preUpdate(){
-        this.setUpdateTime(new Date());
-    }
-
 }

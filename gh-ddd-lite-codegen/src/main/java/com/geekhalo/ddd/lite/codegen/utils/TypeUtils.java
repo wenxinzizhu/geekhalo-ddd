@@ -5,11 +5,16 @@ import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaEntity;
 import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.JpaEntity;
+import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoAggregate;
+import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoEntity;
+import com.geekhalo.ddd.lite.domain.support.mongo.MongoAggregate;
+import com.geekhalo.ddd.lite.domain.support.mongo.MongoEntity;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -116,10 +121,22 @@ public class TypeUtils {
         if (parentCls.startsWith(JpaEntity.class.getName())){
             return "java.lang.Long";
         }
+        if (parentCls.startsWith(MongoAggregate.class.getName())){
+            return BigInteger.class.getName();
+        }
+        if (parentCls.startsWith(MongoEntity.class.getName())){
+            return BigInteger.class.getName();
+        }
         if (parentCls.startsWith(IdentitiedJpaAggregate.class.getName())){
             return getIdClassFrom(parentCls);
         }
         if (parentCls.startsWith(IdentitiedJpaEntity.class.getName())){
+            return getIdClassFrom(parentCls);
+        }
+        if (parentCls.startsWith(IdentitiedMongoAggregate.class.getName())){
+            return getIdClassFrom(parentCls);
+        }
+        if (parentCls.startsWith(IdentitiedMongoEntity.class.getName())){
             return getIdClassFrom(parentCls);
         }
         return null;
