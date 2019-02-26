@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.SOURCE)
 @Inherited
 public @interface EnableGenForAggregate {
-
+    String idClsName() default "";
 }

@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Value
-public class SelfDescribedEnumVo {
+public class SelfDescribedEnumDto {
 
     private final String key;
     private final String desc;
 
-    public static <E extends Enum & SelfDescribedEnum> SelfDescribedEnumVo apply(E describedEnum) {
+    public static <E extends Enum & SelfDescribedEnum> SelfDescribedEnumDto apply(E describedEnum) {
         if (describedEnum == null || describedEnum.name().equals("NONE")) {
             return null;
         }
-        return new SelfDescribedEnumVo(describedEnum.name(), describedEnum.getDescription());
+        return new SelfDescribedEnumDto(describedEnum.name(), describedEnum.getDescription());
     }
 
-    public static <E extends Enum & SelfDescribedEnum> List<SelfDescribedEnumVo> apply(Class<E> eClass) {
+    public static <E extends Enum & SelfDescribedEnum> List<SelfDescribedEnumDto> apply(Class<E> eClass) {
         return Arrays.asList(eClass.getEnumConstants()).stream()
                 .filter(e -> !e.name().equals("NONE"))
-                .map(SelfDescribedEnumVo::apply)
-                .filter(selfDescribedEnumVo -> selfDescribedEnumVo != null)
+                .map(SelfDescribedEnumDto::apply)
+                .filter(selfDescribedEnumDto -> selfDescribedEnumDto != null)
                 .collect(Collectors.toList());
     }
 }

@@ -16,6 +16,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
+import java.math.BigInteger;
 import java.util.List;
 
 @Getter(AccessLevel.PROTECTED)
@@ -135,5 +136,17 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
     }
 
     protected abstract void writeMethod(ExecutableElement executableElement, TypeSpec.Builder builder);
+
+    protected boolean isBigInter(VariableElement idParams) {
+        return idParams.asType().toString().equals(BigInteger.class.getName());
+    }
+
+    protected boolean isLong(VariableElement idParams) {
+        return idParams.asType().toString().equals(Long.class.getName());
+    }
+
+    protected VariableElement getIdParam(ExecutableElement executableElement) {
+        return executableElement.getParameters().get(0);
+    }
 
 }

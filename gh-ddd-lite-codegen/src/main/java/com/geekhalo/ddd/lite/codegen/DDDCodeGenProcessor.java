@@ -1,12 +1,12 @@
 package com.geekhalo.ddd.lite.codegen;
 
 import com.geekhalo.ddd.lite.codegen.application.GenApplicationPlugin;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerPlugin;
 import com.geekhalo.ddd.lite.codegen.converter.GenCodeBasedEnumConverterPlugin;
 import com.geekhalo.ddd.lite.codegen.creator.GenCreatorPlugin;
-import com.geekhalo.ddd.lite.codegen.controller.GenControllerPlugin;
+import com.geekhalo.ddd.lite.codegen.dto.GenDtoPlugin;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryPlugin;
 import com.geekhalo.ddd.lite.codegen.updater.GenUpdaterPlugin;
-import com.geekhalo.ddd.lite.codegen.dto.GenDtoPlugin;
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;

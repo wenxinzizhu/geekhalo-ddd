@@ -1,6 +1,8 @@
-create table tb_news_info
+create table tb_news_info2
 (
-	id bigint auto_increment primary key,
+	_id bigint auto_increment primary key,
+
+  id char(64) not null,
 
   category_id bigint not null,
 	status tinyint null,

@@ -2,8 +2,8 @@ package com.geekhalo.ddd.lite.codegen.dto;
 
 import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
 import com.geekhalo.ddd.lite.codegen.EnableGenForEntity;
-import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregateVo;
-import com.geekhalo.ddd.lite.domain.support.jpa.JpaEntityVo;
+import com.geekhalo.ddd.lite.domain.support.AbstractAggregateDto;
+import com.geekhalo.ddd.lite.domain.support.AbstractEntityDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,13 +41,13 @@ public final class GenDtoParser {
     private void readFromEnableGenForEntity(EnableGenForEntity annotation) {
         this.className = "Base" + element.getSimpleName().toString() + "Dto";
         this.packageName = element.getEnclosingElement().toString();
-        this.parentClassName = JpaEntityVo.class.getName();
+        this.parentClassName = AbstractEntityDto.class.getName();
     }
 
     private void readFromEnableGenForAggregate(EnableGenForAggregate annotation) {
         this.className = "Base" + element.getSimpleName().toString() + "Dto";
         this.packageName = element.getEnclosingElement().toString();
-        this.parentClassName = JpaAggregateVo.class.getName();
+        this.parentClassName = AbstractAggregateDto.class.getName();
     }
 
     private void readFromGenVo(GenDto genDto) {

@@ -30,7 +30,7 @@ public final class ModelBasedSupportMethodWriter implements MethodWriter {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Transactional.class)
-                .returns(TypeName.get(methodMeta.getModelType().asType()));
+                .returns(this.methodMeta.getIdClassName());
         bindDescription(executableElement, methodBuilder);
 
         executableElement.getParameters().forEach(varElement->{
@@ -59,7 +59,7 @@ public final class ModelBasedSupportMethodWriter implements MethodWriter {
                 .append(createParamListStr(executableElement, "result.getId()"))
                 .append(")");
         methodBuilder.addStatement(stringBuilder.toString());
-        methodBuilder.addStatement("return result");
+        methodBuilder.addStatement("return result.getId()");
 
         return methodBuilder.build();
     }
@@ -69,7 +69,7 @@ public final class ModelBasedSupportMethodWriter implements MethodWriter {
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Transactional.class)
                 .returns(TypeName.VOID)
-                .addParameter(createIdParameter());
+                .addParameter(createIdParameter(this.methodMeta.getIdClassName()));
 
         bindDescription(executableElement, methodBuilder);
 

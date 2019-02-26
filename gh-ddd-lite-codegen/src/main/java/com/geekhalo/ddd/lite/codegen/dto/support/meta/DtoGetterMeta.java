@@ -1,7 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.dto.support.meta;
 
-import com.geekhalo.ddd.lite.codegen.support.meta.ModelGetterMeta;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoPropertyConvert;
+import com.geekhalo.ddd.lite.codegen.support.meta.ModelGetterMeta;
 import lombok.AccessLevel;
 import lombok.Setter;
 

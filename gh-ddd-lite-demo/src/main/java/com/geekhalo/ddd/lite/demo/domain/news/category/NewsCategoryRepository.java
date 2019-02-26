@@ -10,5 +10,5 @@ import java.util.Optional;
 @GenApplication
 public interface NewsCategoryRepository extends BaseNewsCategoryRepository{
     @Override
-    Optional<NewsCategory> getById(Long aLong);
+    Optional<NewsCategory> getById(NewsCategoryId aLong);
 }

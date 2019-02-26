@@ -12,6 +12,7 @@ import java.lang.annotation.*;
  */
 public @interface GenSpringDataRepository {
     String pkgName() default "";
+    String idClsName() default "";
     String clsName() default "";
     boolean useQueryDsl() default true;
 }

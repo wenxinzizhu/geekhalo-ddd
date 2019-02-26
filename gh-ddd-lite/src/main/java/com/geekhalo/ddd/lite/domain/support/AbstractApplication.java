@@ -29,21 +29,21 @@ public abstract class AbstractApplication implements Application {
         this.logger = LoggerFactory.getLogger(getClass());
     }
 
-    protected <ID, A extends Aggregate<ID>> Creator<ID, A> creatorFor(Repository<ID, A> repository){
-        return new Creator<ID, A>(repository);
+    protected <ID, A extends Aggregate<ID>> Creator<ID, A> creatorFor(AggregateRepository<ID, A> aggregateRepository){
+        return new Creator<ID, A>(aggregateRepository);
     }
 
-    protected <ID, A extends Aggregate<ID>> Updater<ID, A> updaterFor(Repository<ID, A> repository){
-        return new Updater<ID, A>(repository);
+    protected <ID, A extends Aggregate<ID>> Updater<ID, A> updaterFor(AggregateRepository<ID, A> aggregateRepository){
+        return new Updater<ID, A>(aggregateRepository);
     }
 
-    protected <ID, A extends Aggregate<ID>> Syncer<ID, A> syncerFor(Repository<ID, A> repository){
-        return new Syncer<ID, A>(repository);
+    protected <ID, A extends Aggregate<ID>> Syncer<ID, A> syncerFor(AggregateRepository<ID, A> aggregateRepository){
+        return new Syncer<ID, A>(aggregateRepository);
     }
 
 
     protected class Creator<ID, A extends Aggregate<ID>>{
-        private final Repository<ID, A> repository;
+        private final AggregateRepository<ID, A> aggregateRepository;
         private Supplier<A> instanceFun;
         private Consumer<A> updater = a->{};
         private ValidationHandler validationHandler = new ExceptionBasedValidationHandler();
@@ -58,9 +58,9 @@ public abstract class AbstractApplication implements Application {
             }
         };
 
-        Creator(Repository<ID, A> repository) {
-            Preconditions.checkArgument(repository != null);
-            this.repository = repository;
+        Creator(AggregateRepository<ID, A> aggregateRepository) {
+            Preconditions.checkArgument(aggregateRepository != null);
+            this.aggregateRepository = aggregateRepository;
         }
 
         public Creator<ID, A> instance(Supplier<A> instanceFun){
@@ -101,7 +101,7 @@ public abstract class AbstractApplication implements Application {
 
         public A call(){
             Preconditions.checkArgument(this.instanceFun != null, "instance fun can not be null");
-            Preconditions.checkArgument(this.repository != null, "repository can not be null");
+            Preconditions.checkArgument(this.aggregateRepository != null, "aggregateRepository can not be null");
             A a = null;
             try{
                 a = this.instanceFun.get();
@@ -110,7 +110,7 @@ public abstract class AbstractApplication implements Application {
 
                 a.validateAndCheck(validationHandler);
 
-                this.repository.save(a);
+                this.aggregateRepository.save(a);
 
                 if (this.eventPublisher != null){
                     this.eventPublisher.publishAll(a.getEvents());
@@ -125,7 +125,7 @@ public abstract class AbstractApplication implements Application {
     }
 
     protected class Updater<ID, A extends Aggregate<ID>> {
-        private final Repository<ID, A> repository;
+        private final AggregateRepository<ID, A> aggregateRepository;
         private ID id;
         private Supplier<Optional<A>> loader;
         private Consumer<ID> onNotExistFun = id-> {throw new AggregateNotFountException(id);};
@@ -142,8 +142,8 @@ public abstract class AbstractApplication implements Application {
             }
         };
 
-        Updater(Repository<ID, A> repository) {
-            this.repository = repository;
+        Updater(AggregateRepository<ID, A> aggregateRepository) {
+            this.aggregateRepository = aggregateRepository;
         }
 
         public Updater<ID, A> id(ID id){
@@ -196,7 +196,7 @@ public abstract class AbstractApplication implements Application {
         }
 
         public A call(){
-            Preconditions.checkArgument(this.repository != null, "repository can not be null");
+            Preconditions.checkArgument(this.aggregateRepository != null, "aggregateRepository can not be null");
             Preconditions.checkArgument((this.loader != null || this.id != null), "id and loader can not both be null");
             A a = null;
             try {
@@ -204,7 +204,7 @@ public abstract class AbstractApplication implements Application {
                     throw new RuntimeException("id and loader can both set");
                 }
                 if (id != null){
-                    this.loader = ()->this.repository.getById(this.id);
+                    this.loader = ()->this.aggregateRepository.getById(this.id);
                 }
                 Optional<A> aOptional = this.loader.get();
 
@@ -215,7 +215,7 @@ public abstract class AbstractApplication implements Application {
                 a = aOptional.get();
                 updater.accept(a);
 
-                this.repository.update(a);
+                this.aggregateRepository.update(a);
 
                 if (domainEventPublisher != null){
                     domainEventPublisher.publishAll(a.getEvents());
@@ -237,7 +237,7 @@ public abstract class AbstractApplication implements Application {
     }
 
     protected class Syncer<ID, A extends Aggregate<ID>> {
-        private final Repository<ID, A> repository;
+        private final AggregateRepository<ID, A> aggregateRepository;
         private Supplier<A> instanceFun;
         private Supplier<Optional<A>> loadFun;
         private Consumer<A> updater = a->{};
@@ -254,8 +254,8 @@ public abstract class AbstractApplication implements Application {
             }
         };
 
-        Syncer(Repository<ID, A> repository) {
-            this.repository = repository;
+        Syncer(AggregateRepository<ID, A> aggregateRepository) {
+            this.aggregateRepository = aggregateRepository;
         }
 
         public Syncer<ID, A> instance(Supplier<A> instanceFun){
@@ -308,7 +308,7 @@ public abstract class AbstractApplication implements Application {
 
 
         public A call(){
-            Preconditions.checkArgument(this.repository != null, "repository can not be null");
+            Preconditions.checkArgument(this.aggregateRepository != null, "aggregateRepository can not be null");
             Preconditions.checkArgument(this.loadFun != null, "load fun can not be nul");
             Preconditions.checkArgument(this.instanceFun != null, "instance fun can noe be null");
             A a = null;
@@ -321,7 +321,7 @@ public abstract class AbstractApplication implements Application {
 
                     a.validateAndCheck(validationHandler);
 
-                    this.repository.update(a);
+                    this.aggregateRepository.update(a);
 
                     if (this.eventPublisher != null){
                         eventPublisher.publishAll(a.getEvents());
@@ -337,7 +337,7 @@ public abstract class AbstractApplication implements Application {
 
                     a.validateAndCheck(validationHandler);
 
-                    this.repository.save(a);
+                    this.aggregateRepository.save(a);
 
                     if (this.eventPublisher != null){
                         eventPublisher.publishAll(a.getEvents());

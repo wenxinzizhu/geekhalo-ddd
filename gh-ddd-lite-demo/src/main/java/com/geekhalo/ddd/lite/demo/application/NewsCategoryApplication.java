@@ -1,10 +1,7 @@
 package com.geekhalo.ddd.lite.demo.application;
 
 import com.geekhalo.ddd.lite.codegen.controller.GenController;
-import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategory;
-import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryCreator;
-import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryDto;
-import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryUpdater;
+import com.geekhalo.ddd.lite.demo.domain.news.category.*;
 
 import java.util.Optional;
 
@@ -14,17 +11,17 @@ import java.util.Optional;
 @GenController("com.geekhalo.ddd.lite.demo.controller.BaseNewsCategoryController")
 public interface NewsCategoryApplication extends BaseNewsCategoryApplication{
     @Override
-    NewsCategory create(NewsCategoryCreator creator);
+    NewsCategoryId create(NewsCategoryCreator creator);
 
     @Override
-    void update(Long id, NewsCategoryUpdater updater);
+    void update(NewsCategoryId id, NewsCategoryUpdater updater);
 
     @Override
-    void enable(Long id);
+    void enable(NewsCategoryId id);
 
     @Override
-    void disable(Long id);
+    void disable(NewsCategoryId id);
 
     @Override
-    Optional<NewsCategoryDto> getById(Long aLong);
+    Optional<NewsCategoryDto> getById(NewsCategoryId aLong);
 }

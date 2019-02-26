@@ -9,14 +9,16 @@ import java.util.Optional;
  * Created by taoli on 17/11/16.
  */
 @NoRepositoryBean
-public interface Repository<ID, A extends Aggregate<ID>> {
+public interface AggregateRepository<ID, A extends Aggregate<ID>> {
     Optional<A> getById(ID id);
 
-    List<A> getByIds(List<ID> ids);
+    List<A> getByIdIn(List<ID> ids);
 
-    void save(A a);
+    A save(A a);
 
-    void update(A a);
+    default A update(A a){
+        return save(a);
+    }
 
     void delete(A a);
 

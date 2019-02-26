@@ -1,68 +1,78 @@
 package com.geekhalo.ddd.lite.domain.support;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.geekhalo.ddd.lite.domain.DomainEvent;
-import com.geekhalo.ddd.lite.domain.Entity;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.querydsl.core.annotations.QueryTransient;
 
+import com.geekhalo.ddd.lite.domain.Entity;
+import com.geekhalo.ddd.lite.domain.ValidationHandler;
+import com.geekhalo.ddd.lite.domain.Validator;
+import com.querydsl.core.annotations.QueryTransient;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.Date;
 
 /**
  * Created by taoli on 17/11/16.
  */
+@Getter(AccessLevel.PUBLIC)
+@MappedSuperclass
 public abstract class AbstractEntity<ID> implements Entity<ID> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntity.class);
 
-    @JsonIgnore
+    @Version
+    @Setter(AccessLevel.PRIVATE)
+    @Column(name = "version", nullable = false)
+    private int version;
+
+    @Column(name = "create_time", nullable = false, updatable = false)
+    @Setter(AccessLevel.PROTECTED)
+    private Date createTime;
+
+    @Column(name = "update_time", nullable = false)
+    @Setter(AccessLevel.PROTECTED)
+    private Date updateTime;
+
     @QueryTransient
-    private final List<DomainEventItem> events = Lists.newArrayList();
-
-    protected void registerEvent(DomainEvent event) {
-        events.add(new DomainEventItem(event));
+    public Long getCreateTimeAsMS(){
+        return  toMs(getCreateTime());
     }
 
-    protected void registerEvent(Supplier<DomainEvent> eventSupplier) {
-        this.events.add(new DomainEventItem(eventSupplier));
+    @QueryTransient
+    public Long getUpdateTimeAsMS(){
+        return toMs(getUpdateTime());
     }
 
-    @Override
-    @JsonIgnore
-    public List<DomainEvent> getEvents() {
-        return Collections.unmodifiableList(events.stream()
-                .map(eventSupplier -> eventSupplier.getEvent())
-                .collect(Collectors.toList()));
+    protected Long toMs(Date date){
+        return date == null ? null : date.getTime();
     }
 
     @Override
-    public void cleanEvents() {
-        events.clear();
-    }
-
-    private class DomainEventItem {
-        DomainEventItem(DomainEvent event) {
-            Preconditions.checkArgument(event != null);
-            this.domainEvent = event;
-        }
-
-        DomainEventItem(Supplier<DomainEvent> supplier) {
-            Preconditions.checkArgument(supplier != null);
-            this.domainEventSupplier = supplier;
-        }
-
-        private DomainEvent domainEvent;
-        private Supplier<DomainEvent> domainEventSupplier;
-
-        public DomainEvent getEvent() {
-            if (domainEvent != null) {
-                return domainEvent;
+    public void validate(ValidationHandler handler) {
+        for (Field field : FieldUtils.getAllFieldsList(getClass())){
+            try {
+                Object value = FieldUtils.readField(field, this, true);
+                if (value instanceof Validator){
+                    ((Validator) value).validate(handler);
+                }
+                if (value instanceof Collections){
+                    ((Collection) value).forEach(v->{
+                        if (v instanceof Validator){
+                            ((Validator) v).validate(handler);
+                        }
+                    });
+                }
+            } catch (IllegalAccessException e) {
+                LOGGER.error("failed to get value of {} from {}.", field, this);
             }
-            DomainEvent event = this.domainEventSupplier != null ? this.domainEventSupplier.get() : null;
-            domainEvent = event;
-            return domainEvent;
         }
     }
 }

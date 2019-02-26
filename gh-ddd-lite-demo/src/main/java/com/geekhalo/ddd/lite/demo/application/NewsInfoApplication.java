@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.demo.application;
 
 import com.geekhalo.ddd.lite.codegen.controller.GenController;
+import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryId;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfo;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoCreator;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoDto;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 public interface NewsInfoApplication extends BaseNewsInfoApplication{
 
     // 手工维护方法
-    NewsInfo create(Long categoryId, NewsInfoCreator creator);
+    NewsInfo create(NewsCategoryId categoryId, NewsInfoCreator creator);
 
     @Override
     void disable(Long id);

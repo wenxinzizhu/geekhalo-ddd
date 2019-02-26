@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.demo.application.impl;
 
 import com.geekhalo.ddd.lite.demo.application.NewsInfoApplication;
+import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryId;
 import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryRepository;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfo;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoCreator;
@@ -15,7 +16,7 @@ public class NewsInfoApplicationImpl extends BaseNewsInfoApplicationSupport
     private NewsCategoryRepository newsCategoryRepository;
 
     @Override
-    public NewsInfo create(Long categoryId, NewsInfoCreator creator) {
+    public NewsInfo create(NewsCategoryId categoryId, NewsInfoCreator creator) {
         return creatorFor(getNewsInfoRepository())
                 .publishBy(getDomainEventBus())
                 .instance(()-> NewsInfo.create(this.newsCategoryRepository.getById(categoryId), creator))

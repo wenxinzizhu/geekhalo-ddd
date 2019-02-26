@@ -3,7 +3,7 @@ package com.geekhalo.ddd.lite.codegen.dto.support.writer;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoPropertyModel;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoGetterMeta;
 import com.geekhalo.ddd.lite.domain.support.SelfDescribedEnum;
-import com.geekhalo.ddd.lite.domain.support.SelfDescribedEnumVo;
+import com.geekhalo.ddd.lite.domain.support.SelfDescribedEnumDto;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -27,7 +27,7 @@ public final class SelfDescribedEnumDtoWriter extends AbstractDtoMethodWriter {
 
     @Override
     protected void write(TypeSpec.Builder builder, MethodSpec.Builder cMethodSpecBuilder, DtoGetterMeta methodMeta) {
-        FieldSpec fieldSpec = FieldSpec.builder(ClassName.get(SelfDescribedEnumVo.class), methodMeta.name(), Modifier.PRIVATE)
+        FieldSpec fieldSpec = FieldSpec.builder(ClassName.get(SelfDescribedEnumDto.class), methodMeta.name(), Modifier.PRIVATE)
                 .addAnnotation(AnnotationSpec.builder(Setter.class)
                         .addMember("value", "$T.PACKAGE", AccessLevel.class)
                         .build())
@@ -44,7 +44,7 @@ public final class SelfDescribedEnumDtoWriter extends AbstractDtoMethodWriter {
 
         String fieldName = getFieldName(methodMeta.name());
 
-        cMethodSpecBuilder.addStatement("this.set$L($T.apply(source.get$L()))", fieldName, ClassName.get(SelfDescribedEnumVo.class), fieldName);
+        cMethodSpecBuilder.addStatement("this.set$L($T.apply(source.get$L()))", fieldName, ClassName.get(SelfDescribedEnumDto.class), fieldName);
     }
 
     @Override

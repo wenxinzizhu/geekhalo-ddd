@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
+import java.math.BigInteger;
 import java.util.List;
 
 import static com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils.parseAndCreateForPage;
@@ -56,9 +58,27 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\"/{id}\"")
                         .addMember("method", "$T.GET", ClassName.get(RequestMethod.class))
                         .build());
-        builder.addParameter(ParameterSpec.builder(ClassName.LONG.box(), "id")
-                .addAnnotation(PathVariable.class)
-                .build());
+        VariableElement idParams = getIdParam(executableElement);
+        if (isLong(idParams)) {
+            builder.addParameter(ParameterSpec.builder(ClassName.LONG.box(), "id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build());
+        }else if(isBigInter(idParams)){
+            builder.addParameter(ParameterSpec.builder(ClassName.get(BigInteger.class), "id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build());
+        }else {
+            builder.addParameter(ParameterSpec.builder(ClassName.get(String.class), "_id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build());
+            builder.addStatement("$T id = $T.apply(_id)", idParams, idParams);
+        }
 
         String returnType = executableElement.getReturnType().toString();
         if (getParser().isWrapper()){
@@ -85,6 +105,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
         return builder;
     }
+
 
     private String getTypeFromOptional(String returnType) {
         return returnType.replace("java.util.Optional", "").replace("<", "").replace(">", "");

@@ -76,7 +76,7 @@ public class AbstractApplicationTest {
     }
 
     private class TestApplication extends AbstractApplication {
-        private final TestRepository testRepository = new TestRepository();
+        private final TestAggregateRepository testRepository = new TestAggregateRepository();
 
         protected TestApplication() {
             super(LoggerFactory.getLogger(TestApplication.class));
@@ -116,7 +116,7 @@ public class AbstractApplicationTest {
         }
     }
 
-    private class TestRepository extends AbstractRepository<Long, TestAgg> {
+    private class TestAggregateRepository extends AbstractAggregateRepository<Long, TestAgg> {
         private final AtomicLong idGen = new AtomicLong(1);
         private final Map<Long, TestAgg> data = Maps.newHashMap();
 
@@ -126,7 +126,7 @@ public class AbstractApplicationTest {
         }
 
         @Override
-        public List<TestAgg> getByIds(List<Long> longs) {
+        public List<TestAgg> getByIdIn(List<Long> longs) {
             return longs.stream()
                     .map(id->getById(id))
                     .map(op-> op.orElse(null))
@@ -135,14 +135,16 @@ public class AbstractApplicationTest {
         }
 
         @Override
-        public void save(TestAgg testAgg) {
+        public TestAgg save(TestAgg testAgg) {
             testAgg.id = idGen.getAndAdd(1);
             this.data.put(testAgg.id, testAgg);
+            return testAgg;
         }
 
         @Override
-        public void update(TestAgg testAgg) {
+        public TestAgg update(TestAgg testAgg) {
             data.put(testAgg.id, testAgg);
+            return testAgg;
         }
 
         @Override

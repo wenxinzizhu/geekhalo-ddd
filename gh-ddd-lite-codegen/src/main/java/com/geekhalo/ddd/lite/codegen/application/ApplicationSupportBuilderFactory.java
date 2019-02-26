@@ -1,8 +1,8 @@
 package com.geekhalo.ddd.lite.codegen.application;
 
 import com.geekhalo.ddd.lite.codegen.support.TypeBuilderFactory;
+import com.geekhalo.ddd.lite.domain.AggregateRepository;
 import com.geekhalo.ddd.lite.domain.DomainEventBus;
-import com.geekhalo.ddd.lite.domain.Repository;
 import com.squareup.javapoet.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
         }else {
             repositorySetter = MethodSpec.methodBuilder(repositoryGetterName)
                     .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
-                    .returns(ParameterizedTypeName.get(ClassName.get(Repository.class),
+                    .returns(ParameterizedTypeName.get(ClassName.get(AggregateRepository.class),
                             ClassName.get(Long.class),
                             ClassName.get(modelType.asType())
                     ));

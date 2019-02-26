@@ -6,6 +6,7 @@ import com.geekhalo.ddd.lite.codegen.repository.Index;
 import com.geekhalo.ddd.lite.codegen.repository.Indexes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.squareup.javapoet.ClassName;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.getParentPacketName;
+import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.getIdClassName;
 import static java.util.stream.Collectors.toMap;
 
 public final class GenRepositoryMetaParser {
@@ -50,16 +51,25 @@ public final class GenRepositoryMetaParser {
         TypeElement aggType = typeElement;
         String pkgName = getDefaultPkgName(typeElement);
         String clsName = getDefaultClsName(typeElement);
+        String idClsName = getIdClsName(typeElement, annotation.idClsName());
         List<GenRepositoryMeta.IndexMeta> indexMetas = getIndexMeta(aggType);
-        return new GenRepositoryMeta(true, pkgName, clsName, typeElement, indexMetas);
+        return new GenRepositoryMeta(true, pkgName, clsName, ClassName.bestGuess(idClsName), typeElement, indexMetas);
     }
 
     private GenRepositoryMeta parseFromSpringDataRepository(TypeElement typeElement, GenSpringDataRepository springDataRepository) {
         TypeElement aggType = typeElement;
         String pkgName = getPkgName(typeElement, springDataRepository.pkgName());
         String clsName = getClsName(typeElement, springDataRepository.clsName());
+        String idClsName = getIdClsName(typeElement, springDataRepository.idClsName());
         List<GenRepositoryMeta.IndexMeta> indexMetas = getIndexMeta(aggType);
-        return new GenRepositoryMeta(springDataRepository.useQueryDsl(), pkgName, clsName, typeElement, indexMetas);
+        return new GenRepositoryMeta(springDataRepository.useQueryDsl(), pkgName,  clsName, ClassName.bestGuess(idClsName), typeElement, indexMetas);
+    }
+
+    private String getIdClsName(TypeElement typeElement, String idClsName) {
+        if (StringUtils.isNotEmpty(idClsName)){
+            return idClsName;
+        }
+        return getIdClassName(typeElement);
     }
 
     private List<GenRepositoryMeta.IndexMeta> getIndexMeta(TypeElement aggType) {

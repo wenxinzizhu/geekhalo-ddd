@@ -10,10 +10,10 @@ import javax.lang.model.element.Modifier;
 
 import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.*;
 
-public final class ModelBasedApplictionMethodWriter implements MethodWriter {
+public final class ModelBasedApplicationMethodWriter implements MethodWriter {
     private final ModelBasedMethodMeta methodMeta;
 
-    public ModelBasedApplictionMethodWriter(ModelBasedMethodMeta methodMeta) {
+    public ModelBasedApplicationMethodWriter(ModelBasedMethodMeta methodMeta) {
         this.methodMeta = methodMeta;
     }
 
@@ -27,7 +27,7 @@ public final class ModelBasedApplictionMethodWriter implements MethodWriter {
     private MethodSpec createCreateMethod(ExecutableElement executableElement){
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .returns(TypeName.get(methodMeta.getModelType().asType()));
+                .returns(this.methodMeta.getIdClassName());
         bindDescription(executableElement, methodBuilder);
         executableElement.getParameters().forEach(variableElement -> {
             methodBuilder.addParameter(createParameterSpecFromElement(variableElement));
@@ -40,7 +40,7 @@ public final class ModelBasedApplictionMethodWriter implements MethodWriter {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .returns(TypeName.VOID)
-                .addParameter(createIdParameter());
+                .addParameter(createIdParameter(this.methodMeta.getIdClassName()));
         bindDescription(executableElement, methodBuilder);
         executableElement.getParameters().forEach(variableElement -> {
             methodBuilder.addParameter(createParameterSpecFromElement(variableElement));

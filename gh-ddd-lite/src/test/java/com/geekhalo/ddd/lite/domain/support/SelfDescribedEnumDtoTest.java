@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class SelfDescribedEnumVoTest {
+public class SelfDescribedEnumDtoTest {
 
     @Before
     public void setUp() throws Exception {
@@ -19,20 +19,20 @@ public class SelfDescribedEnumVoTest {
 
     @Test
     public void apply() {
-        SelfDescribedEnumVo t1Vo = SelfDescribedEnumVo.apply(TestEnum.T1);
+        SelfDescribedEnumDto t1Vo = SelfDescribedEnumDto.apply(TestEnum.T1);
         Assert.assertEquals("T1", t1Vo.getKey());
         Assert.assertEquals("t1", t1Vo.getDesc());
 
-        SelfDescribedEnumVo t2Vo = SelfDescribedEnumVo.apply(TestEnum.T2);
+        SelfDescribedEnumDto t2Vo = SelfDescribedEnumDto.apply(TestEnum.T2);
         Assert.assertEquals("T2", t2Vo.getKey());
         Assert.assertEquals("t2", t2Vo.getDesc());
     }
 
     @Test
     public void apply1() {
-        List<SelfDescribedEnumVo> vos = SelfDescribedEnumVo.apply(TestEnum.class);
-        Assert.assertTrue(vos.contains(SelfDescribedEnumVo.apply(TestEnum.T1)));
-        Assert.assertTrue(vos.contains(SelfDescribedEnumVo.apply(TestEnum.T2)));
+        List<SelfDescribedEnumDto> vos = SelfDescribedEnumDto.apply(TestEnum.class);
+        Assert.assertTrue(vos.contains(SelfDescribedEnumDto.apply(TestEnum.T1)));
+        Assert.assertTrue(vos.contains(SelfDescribedEnumDto.apply(TestEnum.T2)));
     }
 
     enum TestEnum implements SelfDescribedEnum {

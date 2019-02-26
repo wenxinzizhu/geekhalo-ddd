@@ -1,10 +1,10 @@
-package com.geekhalo.ddd.lite.domain.support.jpa;
+package com.geekhalo.ddd.lite.domain.support;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public abstract class JpaAggregateVo extends JpaEntityVo{
+public abstract class AbstractEntityDto<ID> {
     @ApiModelProperty(
             value = "数据版本",
             name = "version"
@@ -14,7 +14,7 @@ public abstract class JpaAggregateVo extends JpaEntityVo{
             value = "主键",
             name = "id"
     )
-    private Long id;
+    private ID id;
     @ApiModelProperty(
             value = "创建时间, MS",
             name = "createTimeAsMS"
@@ -26,10 +26,13 @@ public abstract class JpaAggregateVo extends JpaEntityVo{
     )
     private Long updateTimeAsMS;
 
-    protected JpaAggregateVo(JpaAggregate source) {
-       super(source);
+    protected AbstractEntityDto(AbstractEntity<ID> source) {
+        this.setVersion(source.getVersion());
+        this.setId(source.getId());
+        this.setCreateTimeAsMS(source.getCreateTimeAsMS());
+        this.setUpdateTimeAsMS(source.getUpdateTimeAsMS());
     }
 
-    protected JpaAggregateVo() {
+    protected AbstractEntityDto() {
     }
 }

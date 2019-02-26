@@ -1,29 +1,29 @@
 package com.geekhalo.ddd.lite.domain.support.jpa;
 
+import com.geekhalo.ddd.lite.domain.EntityId;
 import com.geekhalo.ddd.lite.domain.support.AbstractEntity;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * Created by taoli on 17/11/16.
- */
-@Data
 @MappedSuperclass
-public abstract class JpaEntity extends AbstractEntity<Long> {
+public abstract class IdentitiedJpaEntity<ID extends EntityId> extends AbstractEntity<ID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.PROTECTED)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "_id")
+    @Setter(AccessLevel.PRIVATE)
+    @Getter(AccessLevel.PRIVATE)
+    private Long _id;
 
+    @Setter(AccessLevel.PROTECTED)
+    private ID id;
 
     @Override
-    public Long getId() {
+    public ID getId() {
         return id;
     }
 

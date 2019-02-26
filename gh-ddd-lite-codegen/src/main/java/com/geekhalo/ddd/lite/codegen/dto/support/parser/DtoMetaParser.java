@@ -1,8 +1,8 @@
 package com.geekhalo.ddd.lite.codegen.dto.support.parser;
 
-import com.geekhalo.ddd.lite.codegen.support.parser.ModelMetaParser;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoGetterMeta;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoMeta;
+import com.geekhalo.ddd.lite.codegen.support.parser.ModelMetaParser;
 
 import javax.lang.model.element.TypeElement;
 

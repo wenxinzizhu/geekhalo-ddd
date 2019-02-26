@@ -1,7 +1,7 @@
 package com.geekhalo.ddd.lite.demo.domain.news.category;
 
 import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
-import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
+import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.UUID;
 
 /**
  * EnableGenForAggregate 自动创建聚合相关的 Base 类
@@ -17,8 +18,12 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "tb_news_category")
-public class NewsCategory extends JpaAggregate {
+@Table(name = "tb_news_category2")
+public class NewsCategory extends IdentitiedJpaAggregate<NewsCategoryId> {
+//
+//    @Setter(AccessLevel.PRIVATE)
+//    @Embedded
+//    private NewsCategoryId id;
 
     private String name;
 
@@ -35,8 +40,9 @@ public class NewsCategory extends JpaAggregate {
      * @param creator
      * @return
      */
-    public static NewsCategory create(NewsCategoryCreator creator){
+    public static NewsCategory create( NewsCategoryCreator creator){
         NewsCategory category = new NewsCategory();
+        category.setId(NewsCategoryId.apply(UUID.randomUUID().toString().replace("-", "")));
         creator.accept(category);
         category.init();
         return category;
@@ -70,4 +76,9 @@ public class NewsCategory extends JpaAggregate {
     private void init() {
         setStatus(NewsCategoryStatus.ENABLE);
     }
+
+//    @Override
+//    public NewsCategoryId getId() {
+//        return this.id;
+//    }
 }

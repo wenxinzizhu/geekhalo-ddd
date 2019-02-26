@@ -1,7 +1,7 @@
-create table tb_news_category
+create table tb_news_category2
 (
-	id bigint auto_increment primary key,
-
+	_id bigint auto_increment primary key,
+  id char(64) not null,
 	name varchar(32) null,
 	status tinyint null,
 

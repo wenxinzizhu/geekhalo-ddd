@@ -3,7 +3,7 @@ package com.geekhalo.ddd.lite.codegen.application;
 import com.geekhalo.ddd.lite.codegen.AbstractProcessorPlugin;
 import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
 import com.geekhalo.ddd.lite.codegen.JavaSource;
-import com.geekhalo.ddd.lite.codegen.application.model.ModelBasedApplictionMethodWriter;
+import com.geekhalo.ddd.lite.codegen.application.model.ModelBasedApplicationMethodWriter;
 import com.geekhalo.ddd.lite.codegen.application.model.ModelBasedMethodMeta;
 import com.geekhalo.ddd.lite.codegen.application.model.ModelBasedMethodMetaParser;
 import com.geekhalo.ddd.lite.codegen.application.model.ModelBasedSupportMethodWriter;
@@ -95,7 +95,7 @@ public final class GenApplicationPlugin
         if (!isRepository){
             ModelBasedMethodMeta modelBasedMethodMeta = this.modelBasedMethodMetaParser.parse(modelType, getTypeCollector());
             {
-                ModelBasedApplictionMethodWriter writer = new ModelBasedApplictionMethodWriter(modelBasedMethodMeta);
+                ModelBasedApplicationMethodWriter writer = new ModelBasedApplicationMethodWriter(modelBasedMethodMeta);
                 writer.writeTo(ifcJavaSource.getTypeSpecBuilder());
             }
             {

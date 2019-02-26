@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.springdatarepository;
 
 import com.google.common.collect.Lists;
+import com.squareup.javapoet.ClassName;
 import lombok.Getter;
 import lombok.Value;
 
@@ -13,6 +14,7 @@ public class GenRepositoryMeta {
     private final boolean useQueryDsl;
     private final String pkgName;
     private final String clsName;
+    private final ClassName idType;
     private final TypeElement aggType;
     private final List<IndexMeta> indices;
 

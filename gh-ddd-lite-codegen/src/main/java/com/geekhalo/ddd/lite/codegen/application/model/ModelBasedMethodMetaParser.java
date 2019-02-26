@@ -3,6 +3,7 @@ package com.geekhalo.ddd.lite.codegen.application.model;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.application.GenApplicationIgnore;
 import com.google.common.collect.Sets;
+import com.squareup.javapoet.ClassName;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -11,13 +12,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.isSetter;
+import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.getIdClassName;
 
 public final class ModelBasedMethodMetaParser {
 
 
     public ModelBasedMethodMeta parse(TypeElement modelType, TypeCollector typeCollector) {
-
-        ModelBasedMethodMeta metadata = new ModelBasedMethodMeta(modelType);
+        String idClassNameStr = getIdClassName(modelType);
+        ModelBasedMethodMeta metadata = new ModelBasedMethodMeta(ClassName.bestGuess(idClassNameStr), modelType);
         TypeElement elementToCollect = modelType;
         Set<String> methods = Sets.newHashSet();
         do {

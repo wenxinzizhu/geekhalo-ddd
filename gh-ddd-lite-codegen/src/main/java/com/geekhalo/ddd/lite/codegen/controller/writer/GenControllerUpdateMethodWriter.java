@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
+import java.math.BigInteger;
 import java.util.List;
 
 import static com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils.parseAndCreateForUpdate;
@@ -43,13 +45,31 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\"{id}/_" + getPathFromMethod(methodName) +"\"")
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
+        VariableElement idParam = getIdParam(executableElement);
+        if (isLong(idParam)) {
+            ParameterSpec idParameter = ParameterSpec.builder(TypeName.LONG.box(), "id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build();
+            builder.addParameter(idParameter);
+        }else if (isBigInter(idParam)){
+            ParameterSpec idParameter = ParameterSpec.builder(ClassName.get(BigInteger.class), "id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build();
+            builder.addParameter(idParameter);
+        }else {
+            ParameterSpec idParameter = ParameterSpec.builder(ClassName.get(String.class), "_id")
+                    .addAnnotation(AnnotationSpec.builder(PathVariable.class)
+                            .addMember("value", "\"id\"")
+                            .build())
+                    .build();
+            builder.addParameter(idParameter);
 
-        ParameterSpec idParameter = ParameterSpec.builder(TypeName.LONG.box(), "id")
-                .addAnnotation(AnnotationSpec.builder(PathVariable.class)
-                        .addMember("value", "\"id\"")
-                        .build())
-                .build();
-        builder.addParameter(idParameter);
+            builder.addStatement("$T id = $T.apply(_id)", idParam, idParam);
+        }
 
         RequestBodyInfo requestBodyInfo = parseAndCreateForUpdate(executableElement, getPkgName(), getCreator());
         if (getParser().isWrapper()){

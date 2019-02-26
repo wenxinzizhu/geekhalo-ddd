@@ -1,15 +1,13 @@
 package com.geekhalo.ddd.lite.codegen.utils;
 
 import com.geekhalo.ddd.lite.codegen.Description;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
+import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
+import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaEntity;
+import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
+import com.geekhalo.ddd.lite.domain.support.jpa.JpaEntity;
+import com.squareup.javapoet.*;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
@@ -45,8 +43,8 @@ public class TypeUtils {
         return parameterBuilder.build();
     }
 
-    public static ParameterSpec createIdParameter(){
-        return ParameterSpec.builder(TypeName.LONG.box(), "id")
+    public static ParameterSpec createIdParameter(ClassName idClassName){
+        return ParameterSpec.builder(idClassName, "id")
                 .addAnnotation(AnnotationSpec.builder(Description.class)
                         .addMember("value", "\"主键\"")
                         .build())
@@ -103,5 +101,31 @@ public class TypeUtils {
 
     public static String getFieldName(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+    }
+
+    public static String getIdClassName(TypeElement typeElement){
+        TypeMirror typeMirror = typeElement.getSuperclass();
+        if (typeMirror == null){
+            return null;
+        }
+
+        String parentCls = typeMirror.toString();
+        if (parentCls.startsWith(JpaAggregate.class.getName())){
+            return "java.lang.Long";
+        }
+        if (parentCls.startsWith(JpaEntity.class.getName())){
+            return "java.lang.Long";
+        }
+        if (parentCls.startsWith(IdentitiedJpaAggregate.class.getName())){
+            return getIdClassFrom(parentCls);
+        }
+        if (parentCls.startsWith(IdentitiedJpaEntity.class.getName())){
+            return getIdClassFrom(parentCls);
+        }
+        return null;
+    }
+
+    private static String getIdClassFrom(String parentCls) {
+        return parentCls.substring(parentCls.indexOf("<") + 1, parentCls.indexOf(">"));
     }
 }

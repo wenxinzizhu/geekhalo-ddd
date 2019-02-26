@@ -1,16 +1,16 @@
 package com.geekhalo.ddd.lite.domain;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created by taoli on 17/11/16.
  */
-public interface Entity<ID> {
+public interface Entity<ID> extends Validator{
     ID getId();
 
     int getVersion();
 
-    List<DomainEvent> getEvents();
+    Date getCreateTime();
 
-    void cleanEvents();
+    Date getUpdateTime();
 }

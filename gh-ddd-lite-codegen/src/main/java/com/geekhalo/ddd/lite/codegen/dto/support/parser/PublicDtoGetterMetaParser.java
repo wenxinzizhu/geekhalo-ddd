@@ -1,7 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.dto.support.parser;
 
-import com.geekhalo.ddd.lite.codegen.support.parser.PublicGetterMetaParser;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoGetterMeta;
+import com.geekhalo.ddd.lite.codegen.support.parser.PublicGetterMetaParser;
 
 import javax.lang.model.element.ExecutableElement;
 

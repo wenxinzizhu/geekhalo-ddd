@@ -1,8 +1,8 @@
 package com.geekhalo.ddd.lite.codegen.support.parser;
 
 import com.geekhalo.ddd.lite.codegen.Description;
-import com.geekhalo.ddd.lite.codegen.support.meta.ModelSetterMeta;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoIgnore;
+import com.geekhalo.ddd.lite.codegen.support.meta.ModelSetterMeta;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.ExecutableElement;

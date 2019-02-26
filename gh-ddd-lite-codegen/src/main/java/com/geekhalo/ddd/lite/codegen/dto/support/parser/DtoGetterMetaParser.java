@@ -1,9 +1,9 @@
 package com.geekhalo.ddd.lite.codegen.dto.support.parser;
 
-import com.geekhalo.ddd.lite.codegen.support.parser.ModelMethodMetaParser;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoIgnore;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoPropertyConvert;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoGetterMeta;
+import com.geekhalo.ddd.lite.codegen.support.parser.ModelMethodMetaParser;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
