@@ -5,9 +5,4 @@ package com.geekhalo.ddd.lite.domain;
  */
 public interface Validator {
     void validate(ValidationHandler handler);
-
-    default void validateAndCheck(ValidationHandler handler){
-        validate(handler);
-        handler.check();
-    }
 }

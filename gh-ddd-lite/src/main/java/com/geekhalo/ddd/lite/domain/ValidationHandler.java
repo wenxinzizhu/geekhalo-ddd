@@ -5,6 +5,4 @@ package com.geekhalo.ddd.lite.domain;
  */
 public interface ValidationHandler {
     void handleError(String msg);
-
-    void check();
 }

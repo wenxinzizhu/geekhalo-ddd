@@ -108,7 +108,10 @@ public abstract class AbstractApplication implements Application {
 
                 this.updater.accept(a);
 
-                a.validateAndCheck(validationHandler);
+                a.validate(validationHandler);
+                if (validationHandler instanceof ValidatrionChecker){
+                    ((ValidatrionChecker)validationHandler).check();
+                }
 
                 this.aggregateRepository.save(a);
 
@@ -215,6 +218,11 @@ public abstract class AbstractApplication implements Application {
                 a = aOptional.get();
                 updater.accept(a);
 
+                a.validate(validationHandler);
+                if (validationHandler instanceof ValidatrionChecker){
+                    ((ValidatrionChecker)validationHandler).check();
+                }
+
                 this.aggregateRepository.update(a);
 
                 if (domainEventPublisher != null){
@@ -319,7 +327,10 @@ public abstract class AbstractApplication implements Application {
 
                     updater.accept(a);
 
-                    a.validateAndCheck(validationHandler);
+                    a.validate(validationHandler);
+                    if (validationHandler instanceof ValidatrionChecker){
+                        ((ValidatrionChecker)validationHandler).check();
+                    }
 
                     this.aggregateRepository.update(a);
 
@@ -335,7 +346,10 @@ public abstract class AbstractApplication implements Application {
 
                     updater.accept(a);
 
-                    a.validateAndCheck(validationHandler);
+                    a.validate(validationHandler);
+                    if (validationHandler instanceof ValidatrionChecker){
+                        ((ValidatrionChecker)validationHandler).check();
+                    }
 
                     this.aggregateRepository.save(a);
 
