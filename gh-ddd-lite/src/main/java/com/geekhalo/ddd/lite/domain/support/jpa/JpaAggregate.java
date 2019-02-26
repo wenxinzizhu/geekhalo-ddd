@@ -1,9 +1,7 @@
 package com.geekhalo.ddd.lite.domain.support.jpa;
 
 import com.geekhalo.ddd.lite.domain.Aggregate;
-import com.geekhalo.ddd.lite.domain.ValidationHandler;
 import com.geekhalo.ddd.lite.domain.support.AbstractAggregate;
-import com.querydsl.core.annotations.QueryTransient;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
