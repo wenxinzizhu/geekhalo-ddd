@@ -27,6 +27,7 @@ public abstract class AbstractAggregate<ID> extends AbstractEntity<ID> implement
     @JsonIgnore
     @QueryTransient
     @Transient
+    @org.springframework.data.annotation.Transient
     private final transient List<DomainEventItem> events = Lists.newArrayList();
 
     protected void registerEvent(DomainEvent event) {
