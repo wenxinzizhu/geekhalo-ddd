@@ -9,6 +9,8 @@ import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoUpdater;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigInteger;
+
 @GenController("com.geekhalo.ddd.lite.demo.controller.BaseNewsInfoController")
 public interface NewsInfoApplication extends BaseNewsInfoApplication{
 
@@ -16,14 +18,14 @@ public interface NewsInfoApplication extends BaseNewsInfoApplication{
     NewsInfo create(NewsCategoryId categoryId, NewsInfoCreator creator);
 
     @Override
-    void disable(Long id);
+    void disable(BigInteger id);
 
     @Override
-    void update(Long id, NewsInfoUpdater updater);
+    void update(BigInteger id, NewsInfoUpdater updater);
 
     @Override
-    void enable(Long id);
+    void enable(BigInteger id);
 
     @Override
-    Page<NewsInfoDto> findValidByCategoryId(Long categoryId, Pageable pageable);
+    Page<NewsInfoDto> findValidByCategoryId(NewsCategoryId categoryId, Pageable pageable);
 }

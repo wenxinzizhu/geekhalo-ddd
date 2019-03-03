@@ -107,7 +107,7 @@ public class RequestBodyInfoUtils {
                                 .build());
                         paramList.add(((VariableElement) element).getSimpleName().toString());
                     }else {
-                        clsBuilder.addField(FieldSpec.builder(ClassName.get(Pageable.class), element.getSimpleName().toString(), Modifier.PRIVATE)
+                        clsBuilder.addField(FieldSpec.builder(ClassName.bestGuess("com.geekhalo.ddd.lite.spring.mvc.PageableImpl"), element.getSimpleName().toString(), Modifier.PRIVATE)
                                 .addAnnotation(AnnotationSpec.builder(ApiModelProperty.class)
                                         .addMember("value", "\"" + descrStr + "\"")
                                         .build())

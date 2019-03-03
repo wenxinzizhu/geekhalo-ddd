@@ -4,12 +4,15 @@ import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
 import com.geekhalo.ddd.lite.codegen.application.GenApplicationIgnore;
 import com.geekhalo.ddd.lite.codegen.repository.Index;
 import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategory;
+import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryId;
 import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryStatus;
 import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
+import com.geekhalo.ddd.lite.domain.support.mongo.MongoAggregate;
 import com.querydsl.core.annotations.QueryEntity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -22,11 +25,13 @@ import java.util.Optional;
 @Index("categoryId")
 @QueryEntity
 @Data
-@Entity
-@Table(name = "tb_news_info")
-public class NewsInfo extends JpaAggregate {
+//@Entity
+//@Table(name = "tb_news_info")
+@Document
+public class NewsInfo extends MongoAggregate {
     @Column(name = "category_id", updatable = false)
-    private Long categoryId;
+    @Setter(AccessLevel.PRIVATE)
+    private NewsCategoryId categoryId;
 
     @Setter(AccessLevel.PRIVATE)
     @Convert(converter = CodeBasedNewsInfoStatusConverter.class)
@@ -52,6 +57,7 @@ public class NewsInfo extends JpaAggregate {
             throw new IllegalArgumentException();
         }
         NewsInfo newsInfo = new NewsInfo();
+        newsInfo.setCategoryId(category.get().getId());
         creator.accept(newsInfo);
         newsInfo.init();
         return newsInfo;

@@ -111,6 +111,10 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         return returnType.replace("java.util.Optional", "").replace("<", "").replace(">", "");
     }
 
+    private String getTypeFromPage(String returnType) {
+        return returnType.replace("org.springframework.data.domain.Page", "").replace("<", "").replace(">", "");
+    }
+
     private boolean isOptional(String returnType) {
         return returnType.startsWith("java.util.Optional");
     }
@@ -185,36 +189,44 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
+        ClassName type = ClassName.bestGuess(this.getTypeFromPage(executableElement.getReturnType().toString()));
+        ClassName pageVoClass = ClassName.bestGuess("com.geekhalo.ddd.lite.spring.mvc.PageVo");
+        TypeName pageVoType = ParameterizedTypeName.get(pageVoClass, type);
+
         if (getParser().isWrapper()){
-            builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())));
+            builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), pageVoType));
 
             RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());
-                builder.addStatement("return $T.success(this.getApplication().$L($L))",
+                builder.addStatement("return $T.success($T.apply(this.getApplication().$L($L)))",
                         ClassName.bestGuess(getParser().getWrapperCls()),
+                        pageVoClass,
                         methodName,
                         createParamListStr(requestBodyInfo.getCallParams()));
             } else {
-                builder.addStatement("return $T.success(this.getApplication().$L())",
+                builder.addStatement("return $T.success($T.apply(this.getApplication().$L()))",
                         ClassName.bestGuess(getParser().getWrapperCls()),
+                        pageVoClass,
                         methodName);
             }
         }else {
-            builder.returns(TypeName.get(executableElement.getReturnType()));
+            builder.returns(pageVoType);
 
             RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());
-                builder.addStatement("return this.getApplication().$L($L)",
+                builder.addStatement("return $T.apply(this.getApplication().$L($L))",
+                        pageVoType,
                         methodName,
                         createParamListStr(requestBodyInfo.getCallParams()));
             } else {
-                builder.addStatement("return this.getApplication().$L()",
+                builder.addStatement("return $T.apply(this.getApplication().$L())",
+                        pageVoType,
                         methodName);
             }
         }

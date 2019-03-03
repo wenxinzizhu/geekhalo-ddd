@@ -20,11 +20,11 @@ import java.util.UUID;
 @EnableGenForAggregate
 
 @Data
-@Entity
-@Table(name = "tb_news_category2")
-//@Document
+//@Entity
+//@Table(name = "tb_news_category2")
+@Document
 @QueryEntity
-public class NewsCategory extends IdentitiedJpaAggregate<NewsCategoryId> {
+public class NewsCategory extends IdentitiedMongoAggregate<NewsCategoryId> {
 //
 //    @Setter(AccessLevel.PRIVATE)
 //    @Embedded
