@@ -20,43 +20,35 @@ public abstract class LombokSetterMetaParser<SetterMeta extends ModelSetterMeta>
     public final List<SetterMeta> parse(TypeElement element) {
         Data data = element.getAnnotation(Data.class);
         Setter setter = element.getAnnotation(Setter.class);
-        if (data != null ||
-                (setter !=null &&
-                        (setter.value() == AccessLevel.PUBLIC ||
-                                setter.value() == AccessLevel.PROTECTED ||
-                                setter.value() == null))){
-            return ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
-                    .filter(field-> !field.getModifiers().contains(Modifier.STATIC))
-                    .filter(field -> {
-                        Setter fieldSetter = field.getAnnotation(Setter.class);
-                        return fieldSetter == null ||
-                                (fieldSetter.value() == AccessLevel.PUBLIC ||
-                                        fieldSetter.value() == AccessLevel.PROTECTED ||
-                                        fieldSetter.value() == null);
-                    })
-                    .map(field -> parseFromElement(field))
-                    .collect(Collectors.toList());
-        }else {
-            return ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
-                    .filter(field->{
-                        Setter fieldSetter = field.getAnnotation(Setter.class);
-                        return fieldSetter != null &&  (fieldSetter.value() == AccessLevel.PUBLIC ||
-                                fieldSetter.value() == AccessLevel.PROTECTED ||
-                                fieldSetter.value() == null);
-                    })
-                    .map(field ->  parseFromElement(field))
-                    .collect(Collectors.toList());
-        }
+        return ElementFilter.fieldsIn(element.getEnclosedElements()).stream()
+                .filter(field-> !field.getModifiers().contains(Modifier.STATIC))
+                .map(field -> {
+                    Setter fieldSetter = field.getAnnotation(Setter.class);
+                    if (fieldSetter != null && fieldSetter.value() != null){
+                        return parseFromElement(field, fieldSetter.value());
+                    }
+                    if (setter != null && setter.value() != null){
+                        return parseFromElement(field, setter.value());
+                    }
+                    if (data != null){
+                        return parseFromElement(field, AccessLevel.PUBLIC);
+                    }
+                    return null;
+                })
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
 
     }
 
     protected abstract SetterMeta metaFor(VariableElement element);
-    private SetterMeta parseFromElement(VariableElement element){
+    private SetterMeta parseFromElement(VariableElement element, AccessLevel accessLevel){
         SetterMeta setterMeta = metaFor(element);
 
         setterMeta.setName(element.getSimpleName().toString());
 
         setterMeta.setType(TypeName.get(element.asType()));
+
+        setterMeta.setAccessLevel(com.geekhalo.ddd.lite.codegen.support.AccessLevel.getFromAccessLecel(accessLevel));
 
         Description description = element.getAnnotation(Description.class);
         if (description != null){

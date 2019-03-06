@@ -9,6 +9,11 @@ public abstract class ModelMethodMeta{
     private boolean ignore;
     private String name;
     private String description;
+    private com.geekhalo.ddd.lite.codegen.support.AccessLevel accessLevel;
+
+    public final com.geekhalo.ddd.lite.codegen.support.AccessLevel accessLevel(){
+        return this.accessLevel;
+    }
 
     public final boolean ignore() {
         return this.ignore;
@@ -28,6 +33,9 @@ public abstract class ModelMethodMeta{
         }
         if (StringUtils.isNotEmpty(methodMeta.description())){
             setDescription(methodMeta.description());
+        }
+        if (this.accessLevel == null){
+            setAccessLevel(methodMeta.accessLevel());
         }
     }
 }

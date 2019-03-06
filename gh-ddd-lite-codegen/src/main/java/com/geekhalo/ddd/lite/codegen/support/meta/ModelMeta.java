@@ -29,7 +29,14 @@ public abstract class ModelMeta<M extends ModelMethodMeta> {
 
     }
 
+    protected boolean accept(M m){
+        return true;
+    }
+
     public List<M> getMethodMetas(){
-        return Lists.newArrayList(this.methods.values().stream().filter(m -> !m.ignore()).collect(Collectors.toList()));
+        return Lists.newArrayList(this.methods.values().stream()
+                .filter(m -> !m.ignore())
+                .filter(this::accept)
+                .collect(Collectors.toList()));
     }
 }
