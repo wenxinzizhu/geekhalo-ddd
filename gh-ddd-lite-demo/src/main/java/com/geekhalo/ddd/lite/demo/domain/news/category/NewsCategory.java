@@ -80,6 +80,7 @@ public class NewsCategory extends IdentitiedMongoAggregate<NewsCategoryId> {
      */
     private void init() {
         setStatus(NewsCategoryStatus.ENABLE);
+        registerEvent(new NewsCategoryCreatedEvent(this, getName()));
     }
 
 //    @Override
