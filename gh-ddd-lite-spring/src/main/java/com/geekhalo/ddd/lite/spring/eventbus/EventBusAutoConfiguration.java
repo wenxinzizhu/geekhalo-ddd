@@ -23,25 +23,4 @@ public class EventBusAutoConfiguration {
     public SpringEventDispatcher springEventDispatcher(){
         return new SpringEventDispatcher();
     }
-
-    class SpringEventDispatcher implements ApplicationEventPublisherAware{
-
-        @Autowired
-        private DomainEventBus domainEventBus;
-
-        private ApplicationEventPublisher eventPublisher;
-
-        @Override
-        public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-            this.eventPublisher = applicationEventPublisher;
-        }
-
-        @PostConstruct
-        public void addListener(){
-            this.domainEventBus.register(event->true, event -> {this.eventPublisher.publishEvent(event);});
-        }
-
-    }
-
-
 }
