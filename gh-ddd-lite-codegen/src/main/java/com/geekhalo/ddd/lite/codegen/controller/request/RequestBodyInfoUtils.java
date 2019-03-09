@@ -10,7 +10,6 @@ import com.squareup.javapoet.TypeSpec;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.data.domain.Pageable;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -87,6 +86,10 @@ public class RequestBodyInfoUtils {
             return null;
         }
         if (params.size() == 1 && notSimpleType(params.get(0))){
+            VariableElement variableElement = params.get(0);
+            if ("org.springframework.data.domain.Pageable".equalsIgnoreCase(variableElement.asType().toString())){
+                return new SingleRequestBody(ClassName.bestGuess("com.geekhalo.ddd.lite.spring.mvc.PageableImpl"), variableElement.getSimpleName().toString());
+            }
             return new SingleRequestBody(params.get(0));
         }
         String name = executableElement.getSimpleName().toString();

@@ -70,6 +70,7 @@ public final class GenApplicationPlugin
         String impName = genApplicationAnnotationParser.getImpName();
         String impFullName = genApplicationAnnotationParser.getFullImplName();
 
+
         JavaSource ifcJavaSource = getJavaSourceCollector().getByName(ifcFullName);
         if (ifcJavaSource == null){
             TypeSpec.Builder builder = new ApplicationBuilderFactory(ifcName).create();

@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.controller.request;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.VariableElement;
@@ -7,24 +8,31 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SingleRequestBody implements RequestBodyInfo {
-    private final VariableElement param;
+    private final TypeName typeName;
+    private final String name;
 
     SingleRequestBody(VariableElement param) {
-        this.param = param;
+        this.typeName = TypeName.get(param.asType());
+        this.name = param.getSimpleName().toString();
+    }
+
+    public SingleRequestBody(ClassName className, String name) {
+        this.typeName = className;
+        this.name = name;
     }
 
     @Override
     public String getParameterName() {
-        return param.getSimpleName().toString();
+        return this.name;
     }
 
     @Override
     public TypeName getParameterType() {
-        return TypeName.get(param.asType());
+        return this.typeName;
     }
 
     @Override
     public List<String> getCallParams() {
-        return Arrays.asList(param.getSimpleName().toString());
+        return Arrays.asList(name);
     }
 }
