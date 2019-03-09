@@ -7,19 +7,17 @@ import com.geekhalo.ddd.lite.codegen.creator.GenCreatorPlugin;
 import com.geekhalo.ddd.lite.codegen.dto.GenDtoPlugin;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryPlugin;
 import com.geekhalo.ddd.lite.codegen.updater.GenUpdaterPlugin;
-import com.google.auto.service.AutoService;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@AutoService(Processor.class)
-public class DDDCodeGenProcessor<T extends Annotation> extends AbstractProcessor {
+//@AutoService(Processor.class)
+public class DDDCodeGenProcessor extends AbstractProcessor {
     private final TypeCollector typeCollector = new TypeCollector();
     private final ProcessorPlugin[] plugins = new ProcessorPlugin[]{
             new GenCodeBasedEnumConverterPlugin(),
