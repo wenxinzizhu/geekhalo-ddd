@@ -3,13 +3,13 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import java.math.BigInteger;
@@ -22,20 +22,22 @@ import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.*;
 
 public final class GenControllerSelectMethodWriter extends GenControllerMethodWriterSupport {
 
-    public GenControllerSelectMethodWriter(GenControllerAnnotationParser parser, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
+    public GenControllerSelectMethodWriter(GenControllerAnnotationParser parser,
+                                           RequestBodyInfoUtils.RequestBodyCreator creator,
+                                           List<GenControllerMethodMeta.MethodMeta> methods, TypeCollector typeCollector) {
         super(parser, creator, methods, typeCollector);
     }
 
     @Override
-    protected void writeMethod(ExecutableElement executableElement, TypeSpec.Builder builder) {
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder) {
         MethodSpec.Builder methodBuilder = null;
-        if (isGetByIdMethod(executableElement)){
+        if (isGetByIdMethod(executableElement.getExecutableElement())){
             methodBuilder = createGetByIdMethod(executableElement);
         }
-        if (isListMethod(executableElement)){
+        if (isListMethod(executableElement.getExecutableElement())){
             methodBuilder = createListMethod(executableElement);
         }
-        if (isPageMethod(executableElement)){
+        if (isPageMethod(executableElement.getExecutableElement())){
             methodBuilder = createPageMethod(executableElement);
         }
         if (methodBuilder != null){
@@ -43,9 +45,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         }
     }
 
-    private MethodSpec.Builder createGetByIdMethod(ExecutableElement executableElement) {
-        String methodName = executableElement.getSimpleName().toString();
-        Description description = getDescription(executableElement);
+    private MethodSpec.Builder createGetByIdMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
@@ -58,7 +60,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\"/{id}\"")
                         .addMember("method", "$T.GET", ClassName.get(RequestMethod.class))
                         .build());
-        VariableElement idParams = getIdParam(executableElement);
+        VariableElement idParams = getIdParam(executableElement.getExecutableElement());
         if (isLong(idParams)) {
             builder.addParameter(ParameterSpec.builder(ClassName.LONG.box(), "id")
                     .addAnnotation(AnnotationSpec.builder(PathVariable.class)
@@ -80,7 +82,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
             builder.addStatement("$T id = $T.apply(_id)", idParams, idParams);
         }
 
-        String returnType = executableElement.getReturnType().toString();
+        String returnType = executableElement.getExecutableElement().getReturnType().toString();
         if (getParser().isWrapper()){
             if (isOptional(returnType)){
                 builder.addStatement("return $T.success(this.getApplication().getById(id).orElse(null))",
@@ -90,7 +92,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
             }else {
                 builder.addStatement("return $T.success(this.getApplication().getById(id))",
                         ClassName.bestGuess(getParser().getWrapperCls()));
-                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())));
+                builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()),
+                        TypeName.get(executableElement.getExecutableElement().getReturnType())));
             }
         }else {
             if (isOptional(returnType)){
@@ -99,7 +102,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                 builder.returns(ClassName.bestGuess(type));
             }else {
                 builder.addStatement("return this.getApplication().getById(id)");
-                builder.returns(TypeName.get(executableElement.getReturnType()));
+                builder.returns(TypeName.get(executableElement.getExecutableElement().getReturnType()));
             }
         }
 
@@ -119,9 +122,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         return returnType.startsWith("java.util.Optional");
     }
 
-    private MethodSpec.Builder createListMethod(ExecutableElement executableElement) {
-        String methodName = executableElement.getSimpleName().toString();
-        Description description = getDescription(executableElement);
+    private MethodSpec.Builder createListMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
@@ -138,7 +141,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         if (getParser().isWrapper()){
             builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()),TypeName.get(executableElement.getReturnType())));
 
-            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
+            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement.getExecutableElement(), getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -155,7 +158,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         }else {
             builder.returns(TypeName.get(executableElement.getReturnType()));
 
-            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
+            RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement.getExecutableElement(), getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -173,9 +176,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
     }
 
 
-    private MethodSpec.Builder createPageMethod(ExecutableElement executableElement) {
-        String methodName = executableElement.getSimpleName().toString();
-        Description description = getDescription(executableElement);
+    private MethodSpec.Builder createPageMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
@@ -196,7 +199,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         if (getParser().isWrapper()){
             builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), pageVoType));
 
-            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
+            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement.getExecutableElement(), getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -215,7 +218,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         }else {
             builder.returns(pageVoType);
 
-            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement, getPkgName(), getCreator());
+            RequestBodyInfo requestBodyInfo = parseAndCreateForPage(executableElement.getExecutableElement(), getPkgName(), getCreator());
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)

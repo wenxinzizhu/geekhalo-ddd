@@ -3,6 +3,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.TypeSpec;
@@ -24,12 +25,13 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
     private final GenControllerAnnotationParser parser;
     private final String pkgName;
     private final RequestBodyInfoUtils.RequestBodyCreator creator;
-    private final List<ExecutableElement> methods;
+    private final List<GenControllerMethodMeta.MethodMeta> methods;
     private final TypeCollector typeCollector;
 
     protected GenControllerMethodWriterSupport(GenControllerAnnotationParser parser,
                                                RequestBodyInfoUtils.RequestBodyCreator creator,
-                                               List<ExecutableElement> methods, TypeCollector typeCollector) {
+                                               List<GenControllerMethodMeta.MethodMeta> methods,
+                                               TypeCollector typeCollector) {
         this.parser = parser;
         this.pkgName = parser.getPkgName();
         this.creator = creator;
@@ -40,7 +42,9 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
     @Override
     public void writeTo(TypeSpec.Builder builder) {
         if (!CollectionUtils.isEmpty(methods)){
-            this.methods.forEach(executableElement -> writeMethod(executableElement, builder));
+            this.methods.stream()
+                    .filter(methodMeta -> !methodMeta.isIngnore())
+                    .forEach(executableElement -> writeMethod(executableElement, builder));
         }
     }
 
@@ -135,7 +139,7 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
         return (TypeElement) type;
     }
 
-    protected abstract void writeMethod(ExecutableElement executableElement, TypeSpec.Builder builder);
+    protected abstract void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder);
 
     protected boolean isBigInter(VariableElement idParams) {
         return idParams.asType().toString().equals(BigInteger.class.getName());

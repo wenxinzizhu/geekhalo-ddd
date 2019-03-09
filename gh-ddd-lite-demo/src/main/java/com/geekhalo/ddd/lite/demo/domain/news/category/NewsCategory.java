@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.demo.domain.news.category;
 
+import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.EnableGenForAggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
 import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoAggregate;
@@ -64,6 +65,7 @@ public class NewsCategory extends IdentitiedMongoAggregate<NewsCategoryId> {
     /**
      * 启用
      */
+    @Description("启用")
     public void enable(){
         setStatus(NewsCategoryStatus.ENABLE);
     }

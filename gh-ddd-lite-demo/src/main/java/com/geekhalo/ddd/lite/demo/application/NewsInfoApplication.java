@@ -12,20 +12,9 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigInteger;
 
 @GenController("com.geekhalo.ddd.lite.demo.controller.BaseNewsInfoController")
-public interface NewsInfoApplication extends BaseNewsInfoApplication{
+public interface NewsInfoApplication extends BaseNewsInfoApplication {
 
     // 手工维护方法
     NewsInfo create(NewsCategoryId categoryId, NewsInfoCreator creator);
 
-    @Override
-    void disable(BigInteger id);
-
-    @Override
-    void update(BigInteger id, NewsInfoUpdater updater);
-
-    @Override
-    void enable(BigInteger id);
-
-    @Override
-    Page<NewsInfoDto> findValidByCategoryId(NewsCategoryId categoryId, Pageable pageable);
 }

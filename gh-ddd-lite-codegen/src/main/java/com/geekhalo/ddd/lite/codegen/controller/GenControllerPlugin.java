@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
 
 public final class GenControllerPlugin
     extends AbstractProcessorPlugin{
-    private final GenControllerMethodMetaParser methodMetaParser = new GenControllerMethodMetaParser();
+
 
     @Override
     public Class<Annotation>[] applyAnnCls() {
@@ -23,6 +23,7 @@ public final class GenControllerPlugin
 
     @Override
     protected void process(TypeElement typeElement, Annotation annotation) {
+        GenControllerMethodMetaParser methodMetaParser = new GenControllerMethodMetaParser(getTypeCollector());
         GenControllerAnnotationParser parser = new GenControllerAnnotationParser(typeElement, (GenController) annotation);
 
         JavaSource support = getJavaSourceCollector().getByName(parser.getControllerName());
@@ -34,7 +35,7 @@ public final class GenControllerPlugin
             getJavaSourceCollector().register(support);
         }
 
-        GenControllerMethodMeta methodMeta = this.methodMetaParser.parse(parser.getTypeElement());
+        GenControllerMethodMeta methodMeta = methodMetaParser.parse(parser.getTypeElement());
 
         new GenControllerCreateMethodWriter(parser, this::createJava,
                 methodMeta.getCreateMethods(), this.getTypeCollector()).writeTo(support.getTypeSpecBuilder());

@@ -10,18 +10,5 @@ import java.util.Optional;
  */
 @GenController("com.geekhalo.ddd.lite.demo.controller.BaseNewsCategoryController")
 public interface NewsCategoryApplication extends BaseNewsCategoryApplication{
-    @Override
-    NewsCategoryId create(NewsCategoryCreator creator);
 
-    @Override
-    void update(NewsCategoryId id, NewsCategoryUpdater updater);
-
-    @Override
-    void enable(NewsCategoryId id);
-
-    @Override
-    void disable(NewsCategoryId id);
-
-    @Override
-    Optional<NewsCategoryDto> getById(NewsCategoryId aLong);
 }

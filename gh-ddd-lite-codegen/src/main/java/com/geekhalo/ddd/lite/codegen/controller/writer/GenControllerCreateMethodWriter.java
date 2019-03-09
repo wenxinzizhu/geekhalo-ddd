@@ -3,6 +3,7 @@ package com.geekhalo.ddd.lite.codegen.controller.writer;
 import com.geekhalo.ddd.lite.codegen.Description;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 
@@ -23,18 +23,20 @@ import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.createParamListStr
 public final class GenControllerCreateMethodWriter extends GenControllerMethodWriterSupport {
 
 
-    public GenControllerCreateMethodWriter(GenControllerAnnotationParser parser, RequestBodyInfoUtils.RequestBodyCreator creator, List<ExecutableElement> methods, TypeCollector typeCollector) {
+    public GenControllerCreateMethodWriter(GenControllerAnnotationParser parser,
+                                           RequestBodyInfoUtils.RequestBodyCreator creator,
+                                           List<GenControllerMethodMeta.MethodMeta> methods, TypeCollector typeCollector) {
         super(parser, creator, methods, typeCollector);
     }
 
     @Override
-    protected void writeMethod(ExecutableElement executableElement, TypeSpec.Builder builder) {
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder) {
         builder.addMethod(createCreateMethod(executableElement).build());
     }
 
-    private MethodSpec.Builder createCreateMethod(ExecutableElement executableElement) {
-        String methodName = executableElement.getSimpleName().toString();
-        Description description = getDescription(executableElement);
+    private MethodSpec.Builder createCreateMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
         MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
@@ -48,14 +50,14 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
-        RequestBodyInfo requestBodyInfo =  parseAndCreateOfAllParams(executableElement, getPkgName(), getCreator());
+        RequestBodyInfo requestBodyInfo =  parseAndCreateOfAllParams(executableElement.getExecutableElement(), getPkgName(), getCreator());
         builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                 .addAnnotation(RequestBody.class)
                 .build());
         if (getParser().isWrapper()){
             if( "void".equalsIgnoreCase(executableElement.getReturnType().toString())){
                 builder.addStatement("this.getApplication().$L($L)",
-                        executableElement.getSimpleName().toString(),
+                        executableElement.getMethodName(),
                         createParamListStr(requestBodyInfo.getCallParams()));
                 builder.addStatement("return $T.success()", ClassName.bestGuess(getParser().getWrapperCls()));
 
@@ -63,13 +65,13 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
             }else {
                 builder.addStatement("return $T.success(this.getApplication().$L($L))",
                         ClassName.bestGuess(getParser().getWrapperCls()),
-                        executableElement.getSimpleName().toString(), createParamListStr(requestBodyInfo.getCallParams()));
+                        executableElement.getMethodName(), createParamListStr(requestBodyInfo.getCallParams()));
 
                 builder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()),TypeName.get(executableElement.getReturnType())));
             }
 
         }else {
-            builder.addStatement("return this.getApplication().$L($L)", executableElement.getSimpleName().toString(), createParamListStr(requestBodyInfo.getCallParams()));
+            builder.addStatement("return this.getApplication().$L($L)", executableElement.getMethodName(), createParamListStr(requestBodyInfo.getCallParams()));
 
             builder.returns(TypeName.get(executableElement.getReturnType()));
         }
