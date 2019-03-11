@@ -1078,7 +1078,7 @@ public class Person extends JpaAggregate {
 @GenCreator | 自动生成 BaseXXXCreator
 @GenDto | 自动生成 BaseXXXXDto
 @GenUpdater | 自动生成 BaseXXXXUpdater
-GenSpringDataRepository | 自动生成基于 Spring Data 的 BaseXXXRepository
+@GenSpringDataRepository | 自动生成基于 Spring Data 的 BaseXXXRepository
 @GenApplication | 自动生成 BaseXXXXApplication 以及实现类 BaseXXXXXApplicationSupport
 
 > 对于领域对象的支持，已经非常完成，那对于 Application 的调用者呢？
