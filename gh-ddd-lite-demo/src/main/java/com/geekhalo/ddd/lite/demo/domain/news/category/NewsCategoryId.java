@@ -1,15 +1,22 @@
 package com.geekhalo.ddd.lite.demo.domain.news.category;
 
-import com.geekhalo.ddd.lite.domain.support.jpa.JpaEntityId;
+import com.geekhalo.ddd.lite.domain.support.mongo.MongoEntityId;
+import com.geekhalo.ddd.lite.domain.util.UUIDUtil;
 
-import javax.persistence.Embeddable;
 
-@Embeddable
-public class NewsCategoryId extends JpaEntityId {
+public class NewsCategoryId extends MongoEntityId {
+    private NewsCategoryId(){
+
+    }
+    private NewsCategoryId(String id){
+        setValue(id);
+    }
 
     public static NewsCategoryId apply(String id){
-        NewsCategoryId newsCategoryId = new NewsCategoryId();
-        newsCategoryId.setValue(id);
-        return newsCategoryId;
+        return new NewsCategoryId(id);
+    }
+
+    public static NewsCategoryId create(){
+        return  apply(UUIDUtil.genUUID());
     }
 }

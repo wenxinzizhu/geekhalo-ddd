@@ -48,7 +48,7 @@ public class NewsCategory extends IdentitiedMongoAggregate<NewsCategoryId> {
      */
     public static NewsCategory create( NewsCategoryCreator creator){
         NewsCategory category = new NewsCategory();
-        category.setId(NewsCategoryId.apply(UUID.randomUUID().toString().replace("-", "")));
+        category.setId(NewsCategoryId.create());
         creator.accept(category);
         category.init();
         return category;

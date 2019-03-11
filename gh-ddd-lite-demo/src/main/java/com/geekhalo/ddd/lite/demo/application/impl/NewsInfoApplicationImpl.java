@@ -6,6 +6,7 @@ import com.geekhalo.ddd.lite.demo.domain.news.category.NewsCategoryRepository;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfo;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoCreator;
 import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoDto;
+import com.geekhalo.ddd.lite.demo.domain.news.info.NewsInfoId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
