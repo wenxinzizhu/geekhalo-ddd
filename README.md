@@ -30,6 +30,8 @@ ddd lite 的代码生成理念，来源于领域驱动设计的战术部分，�
 #### 1.3. **gh-ddd-lite-codegen**
 > 基于 gh-ddd-lite 项目，提供样板代码自动生成功能。
 
+详见：https://gitee.com/litao851025/geekhalo-ddd/tree/master/gh-ddd-lite-codegen
+
 #### 1.4. **gh-ddd-lite-demo**
 > 展示项目的正确使用方式。
 
