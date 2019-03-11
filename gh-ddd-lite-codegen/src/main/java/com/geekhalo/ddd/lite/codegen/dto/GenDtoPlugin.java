@@ -53,7 +53,7 @@ public class GenDtoPlugin extends AbstractProcessorPlugin {
 
         MethodSpec.Builder cMethodSpecBuilder = MethodSpec.constructorBuilder()
                 .addParameter(TypeName.get(element.asType()), "source")
-                .addModifiers(Modifier.PROTECTED);
+                .addModifiers(Modifier.PUBLIC);
 
         if (StringUtils.isNotEmpty(parentClassName)){
             cMethodSpecBuilder.addStatement("super(source)");

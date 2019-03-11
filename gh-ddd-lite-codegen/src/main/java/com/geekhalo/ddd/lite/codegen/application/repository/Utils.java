@@ -69,7 +69,7 @@ class Utils {
     }
 
     public static String getConvertPageMethodName(TypeElement typeElement){
-        return "convvert" + typeElement.getSimpleName().toString() + "Page";
+        return "convert" + typeElement.getSimpleName().toString() + "Page";
     }
 
 }

@@ -21,6 +21,7 @@
     </properties>
 
     <dependencies>
+        <!-- 添加 ddd 相关支持-->
         <dependency>
             <groupId>com.geekhalo</groupId>
             <artifactId>gh-ddd-lite</artifactId>
@@ -31,6 +32,9 @@
             <artifactId>gh-ddd-lite-spring</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- 添加 code gen 依赖，将自动启用 EndpointCodeGenProcessor 处理器-->
+        <!--编译时有效即可，运行时，不需要引用-->
         <dependency>
             <groupId>com.geekhalo</groupId>
             <artifactId>gh-ddd-lite-codegen</artifactId>
@@ -43,6 +47,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- 持久化主要由 Spring Data 提供支持-->
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-mongodb</artifactId>
@@ -51,32 +56,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-data-jpa</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+
+        <!-- 添加测试支持-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>mysql</groupId>-->
-            <!--<artifactId>mysql-connector-java</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.flywaydb</groupId>-->
-            <!--<artifactId>flyway-core</artifactId>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
+        <!-- 添加 Swagger 支持-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -90,21 +82,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>true</executable>
-                    <layout>ZIP</layout>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
                 <version>1.1.3</version>
@@ -115,9 +92,10 @@
                         </goals>
                         <configuration>
                             <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <!--<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>-->
                             <processors>
+                                <!--添加 Querydsl 处理器-->
                                 <processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>
+                                <!--添加 DDD 处理器-->
                                 <processor>com.geekhalo.ddd.lite.codegen.DDDCodeGenProcessor</processor>
                             </processors>
                         </configuration>
