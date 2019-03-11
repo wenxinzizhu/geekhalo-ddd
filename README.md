@@ -14,10 +14,15 @@
 #### 1. DDD Lite
 > DDD Lite 部分，聚焦于战术层，对实体、值对象、领域服务、领域事件、模块、聚合、工厂、仓库等，提供落地支撑。
 
-详见: https://gitee.com/litao851025/geekhalo-ddd/tree/master/gh-ddd-lite
+ddd lite 致力于将程序员从繁重的重复性技术工作中解放出来，让其回归业务本质。因此，在 ddd lite 中大量使用代码生成技术，从而减轻开发压力。
+
+ddd lite 的代码生成理念，来源于领域驱动设计的战术部分，主要围绕 DDD 的核心组件完成。一句话解释，就是开发人员主要负责领域对象建模，其余部分由框架完成。
+
 
 #### 1.1 **gh-ddd-lite**
 > 聚焦于战术模型中最佳实战经验，完成对 DDD 战术概念进行封装。
+
+详见: https://gitee.com/litao851025/geekhalo-ddd/tree/master/gh-ddd-lite
 
 #### 1.2. **gh-ddd-lite-spring**
 > 为 gh-ddd-lite 提供 spring 的支持。
