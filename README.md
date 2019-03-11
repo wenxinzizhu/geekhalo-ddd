@@ -1,6 +1,8 @@
 # geekhalo-ddd
 > geekhalo ddd 项目，主要对 DDD 相关理念进行抽象，并提供多种基础服务。
 
+项目文档以及项目主地址见：https://gitee.com/litao851025/geekhalo-ddd
+
 整个项目的设计理念遵循：
 1. 梳理 DDD 相关理念，推进 DDD 的学习；
 2. 寻求 DDD 最佳实践，分解、抽象并对其进行封装，将重用性最大化；
