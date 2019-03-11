@@ -14,7 +14,7 @@
 #### 1. DDD Lite
 > DDD Lite 部分，聚焦于战术层，对实体、值对象、领域服务、领域事件、模块、聚合、工厂、仓库等，提供落地支撑。
 
-该部分主要包括：
+详见: https://gitee.com/litao851025/geekhalo-ddd/tree/master/gh-ddd-lite
 
 #### 1.1 **gh-ddd-lite**
 > 聚焦于战术模型中最佳实战经验，完成对 DDD 战术概念进行封装。

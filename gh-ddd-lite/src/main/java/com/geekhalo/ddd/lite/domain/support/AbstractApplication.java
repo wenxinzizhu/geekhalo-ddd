@@ -113,8 +113,8 @@ public abstract class AbstractApplication implements Application {
                 this.updater.accept(a);
 
                 a.validate(validationHandler);
-                if (validationHandler instanceof ValidatrionChecker){
-                    ((ValidatrionChecker)validationHandler).check();
+                if (validationHandler instanceof ValidationChecker){
+                    ((ValidationChecker)validationHandler).check();
                 }
 
                 this.aggregateRepository.save(a);
@@ -227,8 +227,8 @@ public abstract class AbstractApplication implements Application {
                 updater.accept(a);
 
                 a.validate(validationHandler);
-                if (validationHandler instanceof ValidatrionChecker){
-                    ((ValidatrionChecker)validationHandler).check();
+                if (validationHandler instanceof ValidationChecker){
+                    ((ValidationChecker)validationHandler).check();
                 }
 
                 this.aggregateRepository.update(a);
@@ -344,8 +344,8 @@ public abstract class AbstractApplication implements Application {
                     updater.accept(a);
 
                     a.validate(validationHandler);
-                    if (validationHandler instanceof ValidatrionChecker){
-                        ((ValidatrionChecker)validationHandler).check();
+                    if (validationHandler instanceof ValidationChecker){
+                        ((ValidationChecker)validationHandler).check();
                     }
 
                     this.aggregateRepository.update(a);
@@ -363,8 +363,8 @@ public abstract class AbstractApplication implements Application {
                     updater.accept(a);
 
                     a.validate(validationHandler);
-                    if (validationHandler instanceof ValidatrionChecker){
-                        ((ValidatrionChecker)validationHandler).check();
+                    if (validationHandler instanceof ValidationChecker){
+                        ((ValidationChecker)validationHandler).check();
                     }
 
                     this.aggregateRepository.save(a);

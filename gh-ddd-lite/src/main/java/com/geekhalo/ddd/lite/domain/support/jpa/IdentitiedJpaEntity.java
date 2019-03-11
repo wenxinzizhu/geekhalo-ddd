@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
-public abstract class IdentitiedJpaEntity<ID extends EntityId> extends AbstractEntity<ID> {
+public abstract class IdentitiedJpaEntity<ID extends JpaEntityId> extends AbstractEntity<ID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
