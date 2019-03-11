@@ -1,4 +1,4 @@
-### DDD 战术部分组件封装
+### DDD 战术组件封装
 
 所涉及的战术组件包括:
 1. 实体
@@ -14,7 +14,7 @@
 > 一个实体是一个唯一的东西，并且可以在相当长的一段时间内持续变化。
 
   
-一个实体模型就是一个独立的事物。每个实体都拥有一个唯一非标识符，可以以他的个体性和所有其他类型相同或不同的实体区分开。大多时候，实体是可变的。也就是说，他的状态随着时间发生变化。
+一个实体模型就是一个独立的事物。每个实体都拥有一个唯一标识符，可以以他的个体性与所有其他类型相同或不同的实体区分开。大多时候，实体是可变的。也就是说，他的状态随着时间发生变化。
 
 首先，先看下，为支持实体所提供的类：
 
@@ -30,21 +30,21 @@
 
 实体的唯一标识，优先使用值对象，以保证其不变性。
 
-通常情况下，实体唯一标识的生出，主要有以下几种方式：
+通常情况下，实体唯一标识的生成，主要有以下几种方式：
 1. 程序生成
 2. 持久化机制生成
 
 ###### 程序生成
 > 该策略属于及早生成方案，在实体创建完成后，已经分配了唯一标识。
 
-为此，框架提供 EntityId 接口，以表达程序生成标识。
+为此，框架提供 EntityId 接口，以规范实体的唯一标识（主要用于程序生成方案）。
 
 
 ![image](http://litao851025.gitee.io/books-image/gh-ddd-lite/entityId.png)
 
-唯一标识，继承在 ValueObject，是一种特殊的值对象。
-1. MongoEntityId 提供 MongoEntity 的唯一标识 
-2. JpaEntityId 提供 JpaEntity 的唯一标识
+唯一标识继承在 ValueObject，是一种特殊的值对象。
+1. MongoEntityId 为 MongoEntity 提供的唯一标识父类 
+2. JpaEntityId 为 JpaEntity 提供的唯一标识父类
 
 ###### 持久化机制生成
 > 该策略属于延迟生成方案，只有当实体成功持久化后，才能获得唯一标识。
@@ -179,9 +179,9 @@ AbstractEntity 主要对通用属性进行封装。
 
 基类 | 用途
 ---|---
-JpaEntity | 基于 Jpa 的实体实现，id 为 Long 类型，使用持久化生成机制
+JpaEntity | 基于 Jpa 的实体实现，ID 为 Long 类型，使用持久化生成
 IdentitiedJpaEntity | 基于 Jpa 的委派标识实体，ID 为 JpaEntityId 子类型，由应用程序维护；使用自增 _id 为数据库主键，为框架服务。
-MongoEntity | 基于 MongoDB 的实体实现，id 为 BigInteger 类型，使用驱动生成机制
+MongoEntity | 基于 MongoDB 的实体实现，ID 为 BigInteger 类型，使用驱动生成
 IdentitiedMongoEntity | 基于 MongoDB 的委派标识实体，ID 为 MongoEntityId 子类型，由应用程序维护；使用BigInteger _id 为数据库主键，为框架服务。
 
 ##### 1.4 Validator 验证支持
