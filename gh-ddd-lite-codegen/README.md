@@ -1,6 +1,7 @@
 ### ddd-lite-codegen
 > 基于 ddd lite 和 ddd lite spring 体系构建，基于领域模型对象自动生成其他非核心代码。
 
+样板代码终结者
 
 ### 0. 运行原理 
 > ddd lite codegen 构建于 apt 技术之上。
@@ -387,7 +388,7 @@ public void update(PersonUpdater updater){
 }
 ```
 
-### 4. genDto 
+### 4. GenDto 
 > dto 是大家最熟悉的模式，但这里的 dto，只针对返回数据。请求数据，统一使用 Creator 和 Updater 完成。
 
 #### 4.1 启用 GenDto
@@ -469,7 +470,7 @@ public class PersonDto extends BasePersonDto{
 2. 为每个 getter 方法添加属性；
 3. 新建构造函数，在构造函数中完成目标对象到 BaseXXXDto 的属性赋值。
 
-### 5. genConverter
+### 5. GenConverter
 > converter 主要针对使用 Jpa 作为存储的场景。
 
 #### 5.1 设计背景
@@ -534,7 +535,7 @@ public class Person extends JpaAggregate {
 }
 ```
 
-### 6. genRepository
+### 6. GenRepository
 > Repository 是领域驱动设计中很重要的一个组件，一个聚合根对于一个 Repository。
 
 Repository 与基础设施关联紧密，框架通过 @GenSpringDataRepository 提供了 Spring Data Repository 的支持。
