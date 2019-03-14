@@ -145,4 +145,13 @@ public class TypeUtils {
     private static String getIdClassFrom(String parentCls) {
         return parentCls.substring(parentCls.indexOf("<") + 1, parentCls.indexOf(">"));
     }
+
+    public static String getPackageFromFullClassName(String fullClassName){
+        return fullClassName.substring(0, fullClassName.lastIndexOf('.'));
+    }
+
+    public static String getClassNameFromFullClassName(String fullClassName){
+        return fullClassName.substring(fullClassName.lastIndexOf('.') + 1, fullClassName.length());
+
+    }
 }

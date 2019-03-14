@@ -1,11 +1,12 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.codegen.JavaSourceCollector;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
-import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
+import com.geekhalo.ddd.lite.codegen.controller.request.UpdateMethodRequestBodyParser;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -15,24 +16,25 @@ import javax.lang.model.element.VariableElement;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils.parseAndCreateForUpdate;
 import static com.geekhalo.ddd.lite.codegen.controller.writer.PathUtils.getPathFromMethod;
 import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.createParamListStr;
 
 
 public final class GenControllerUpdateMethodWriter extends GenControllerMethodWriterSupport {
     public GenControllerUpdateMethodWriter(GenControllerAnnotationParser parser,
-                                           RequestBodyInfoUtils.RequestBodyCreator creator,
-                                           List<GenControllerMethodMeta.MethodMeta> methods, TypeCollector typeCollector) {
-        super(parser, creator, methods, typeCollector);
+                                           List<GenControllerMethodMeta.MethodMeta> methods,
+                                           TypeCollector typeCollector) {
+        super(parser, methods, typeCollector);
     }
 
     @Override
-    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder) {
-        builder.addMethod(createUpdateMethod(executableElement).build());
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder, JavaSourceCollector javaSourceCollector) {
+        MethodSpec.Builder method = createUpdateMethod(executableElement, javaSourceCollector);
+        builder.addMethod(method.build());
     }
 
-    private MethodSpec.Builder createUpdateMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+    private MethodSpec.Builder createUpdateMethod(GenControllerMethodMeta.MethodMeta executableElement,
+                                                  JavaSourceCollector javaSourceCollector) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -73,7 +75,11 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
             builder.addStatement("$T id = $T.apply(_id)", idParam, idParam);
         }
 
-        RequestBodyInfo requestBodyInfo = parseAndCreateForUpdate(executableElement.getExecutableElement(), getPkgName(), getCreator());
+        RequestBodyInfo requestBodyInfo = new UpdateMethodRequestBodyParser(getPkgName(), getBaseClassName())
+                .parseForMethod(executableElement.getExecutableElement());
+        if (requestBodyInfo != null){
+            requestBodyInfo.getSubType().forEach(javaSource -> javaSourceCollector.register(javaSource));
+        }
         if (getParser().isWrapper()){
             if (requestBodyInfo != null) {
                 builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
@@ -106,6 +112,8 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
             }
             builder.returns(TypeName.VOID);
         }
+
+
         return builder;
     }
 

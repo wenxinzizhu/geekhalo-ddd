@@ -37,17 +37,16 @@ public final class GenControllerPlugin
 
         GenControllerMethodMeta methodMeta = methodMetaParser.parse(parser.getTypeElement());
 
-        new GenControllerCreateMethodWriter(parser, this::createJava,
-                methodMeta.getCreateMethods(), this.getTypeCollector()).writeTo(support.getTypeSpecBuilder());
-        new GenControllerUpdateMethodWriter(parser, this::createJava,
-                methodMeta.getUpdateMethods(), this.getTypeCollector()).writeTo(support.getTypeSpecBuilder());
-        new GenControllerSelectMethodWriter(parser, this::createJava,
-                methodMeta.getQueryMethods(), getTypeCollector()).writeTo(support.getTypeSpecBuilder());
+        new GenControllerCreateMethodWriter(parser,
+                methodMeta.getCreateMethods(), this.getTypeCollector())
+                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
+        new GenControllerUpdateMethodWriter(parser,
+                methodMeta.getUpdateMethods(), this.getTypeCollector())
+                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
+        new GenControllerSelectMethodWriter(parser,
+                methodMeta.getQueryMethods(), getTypeCollector())
+                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
 
-    }
-
-    public void createJava(JavaSource javaSource){
-        getJavaSourceCollector().register(javaSource.getFullName(),javaSource);
     }
 
 

@@ -1,11 +1,12 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.codegen.JavaSourceCollector;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
+import com.geekhalo.ddd.lite.codegen.controller.request.CreateMethodRequestBodyParser;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
-import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 
-import static com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils.parseAndCreateOfAllParams;
 import static com.geekhalo.ddd.lite.codegen.controller.writer.PathUtils.getPathFromMethod;
 import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.createParamListStr;
 
@@ -24,17 +24,16 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
 
 
     public GenControllerCreateMethodWriter(GenControllerAnnotationParser parser,
-                                           RequestBodyInfoUtils.RequestBodyCreator creator,
                                            List<GenControllerMethodMeta.MethodMeta> methods, TypeCollector typeCollector) {
-        super(parser, creator, methods, typeCollector);
+        super(parser, methods, typeCollector);
     }
 
     @Override
-    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder) {
-        builder.addMethod(createCreateMethod(executableElement).build());
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder, JavaSourceCollector javaSourceCollector) {
+        builder.addMethod(createCreateMethod(executableElement, javaSourceCollector).build());
     }
 
-    private MethodSpec.Builder createCreateMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+    private MethodSpec.Builder createCreateMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSourceCollector javaSourceCollector) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -50,10 +49,14 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
                         .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
-        RequestBodyInfo requestBodyInfo =  parseAndCreateOfAllParams(executableElement.getExecutableElement(), getPkgName(), getCreator());
+        RequestBodyInfo requestBodyInfo = new CreateMethodRequestBodyParser(getPkgName(), getBaseClassName())
+                .parseForMethod(executableElement.getExecutableElement());
+        requestBodyInfo.getSubType().forEach(javaSource -> javaSourceCollector.register(javaSource));
+
         builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                 .addAnnotation(RequestBody.class)
                 .build());
+
         if (getParser().isWrapper()){
             if( "void".equalsIgnoreCase(executableElement.getReturnType().toString())){
                 builder.addStatement("this.getApplication().$L($L)",
