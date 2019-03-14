@@ -8,8 +8,11 @@ import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfoUtils;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import java.math.BigInteger;
@@ -21,6 +24,7 @@ import static com.geekhalo.ddd.lite.codegen.controller.writer.PathUtils.getPathF
 import static com.geekhalo.ddd.lite.codegen.utils.MethodUtils.*;
 
 public final class GenControllerSelectMethodWriter extends GenControllerMethodWriterSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenControllerSelectMethodWriter.class);
 
     public GenControllerSelectMethodWriter(GenControllerAnnotationParser parser,
                                            RequestBodyInfoUtils.RequestBodyCreator creator,
@@ -33,16 +37,69 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         MethodSpec.Builder methodBuilder = null;
         if (isGetByIdMethod(executableElement.getExecutableElement())){
             methodBuilder = createGetByIdMethod(executableElement);
-        }
-        if (isListMethod(executableElement.getExecutableElement())){
+        }else if (isListMethod(executableElement.getExecutableElement())){
             methodBuilder = createListMethod(executableElement);
-        }
-        if (isPageMethod(executableElement.getExecutableElement())){
+        }else if (isPageMethod(executableElement.getExecutableElement())){
             methodBuilder = createPageMethod(executableElement);
+        }else if (isOptionalMethod(executableElement.getExecutableElement())){
+            methodBuilder = createOptionalMethod(executableElement);
         }
+
         if (methodBuilder != null){
             builder.addMethod(methodBuilder.build());
+        }else {
+            LOGGER.warn("failed to write method for {}", executableElement.getMethodName());
         }
+    }
+
+    private MethodSpec.Builder createOptionalMethod(GenControllerMethodMeta.MethodMeta executableElement) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
+        String descriptionStr = description != null ? description.value() : "";
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ResponseBody.class)
+                .addAnnotation(AnnotationSpec.builder(ApiOperation.class)
+                        .addMember("value", "\""+ descriptionStr +"\"")
+                        .addMember("nickname","\"" + methodName + "\"")
+                        .build())
+                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                        .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
+                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
+                        .build());
+
+        String returnType = executableElement.getReturnType().toString();
+        RequestBodyInfo requestBodyInfo = parseAndCreateOfAllParams(executableElement.getExecutableElement(), getPkgName(), getCreator());
+        if (requestBodyInfo != null){
+            builder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                    .addAnnotation(RequestBody.class)
+                    .build());
+            if (isOptionalMethod(executableElement.getExecutableElement())) {
+                builder.addStatement("return this.getApplication().$L($L).orElse(null)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+                String type = getTypeFromOptional(returnType);
+                builder.returns(ClassName.bestGuess(type));
+            }else {
+                builder.addStatement("return this.getApplication().$L($L)",
+                        methodName,
+                        createParamListStr(requestBodyInfo.getCallParams()));
+                builder.returns(TypeName.get(executableElement.getReturnType()));
+            }
+        }else {
+            if (isOptionalMethod(executableElement.getExecutableElement())) {
+                builder.addStatement("return this.getApplication().$L().orElse(null)",
+                        methodName);
+                String type = getTypeFromOptional(returnType);
+                builder.returns(ClassName.bestGuess(type));
+            }else {
+                builder.addStatement("return this.getApplication().$L()",
+                        methodName);
+                builder.returns(TypeName.get(executableElement.getReturnType()));
+            }
+        }
+
+        return builder;
     }
 
     private MethodSpec.Builder createGetByIdMethod(GenControllerMethodMeta.MethodMeta executableElement) {

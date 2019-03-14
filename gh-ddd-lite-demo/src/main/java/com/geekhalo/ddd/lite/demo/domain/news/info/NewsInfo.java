@@ -25,13 +25,18 @@ import java.util.Optional;
 @EnableGenForAggregate
 
 @Index("categoryId")
+@Index(value = "code", unique = true)
 @QueryEntity
 @Data
 @Document
 public class NewsInfo extends IdentitiedMongoAggregate<NewsInfoId> {
+
     @Column(name = "category_id", updatable = false)
     @Setter(AccessLevel.PRIVATE)
     private NewsCategoryId categoryId;
+
+    @Setter(AccessLevel.PROTECTED)
+    private String code;
 
     @Setter(AccessLevel.PRIVATE)
     @Convert(converter = CodeBasedNewsInfoStatusConverter.class)

@@ -33,7 +33,7 @@ public class MethodUtils {
         if (hasAnnotation(method, QueryMethod.class)){
             return true;
         }
-        return isGetByIdMethod(method) || isListMethod(method) || isPageMethod(method);
+        return isGetByIdMethod(method) || isOptionalMethod(method) || isListMethod(method) || isPageMethod(method);
     }
 
 
@@ -41,6 +41,10 @@ public class MethodUtils {
         return executableElement.getReturnType().toString().startsWith("java.util.Optional")
                 && executableElement.getParameters().size() == 1
                 && "getById".equalsIgnoreCase(executableElement.getSimpleName().toString());
+    }
+
+    public static boolean isOptionalMethod(ExecutableElement executableElement){
+        return executableElement.getReturnType().toString().startsWith("java.util.Optional");
     }
 
     public static boolean isListMethod(ExecutableElement executableElement) {

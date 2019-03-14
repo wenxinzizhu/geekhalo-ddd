@@ -70,7 +70,7 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
                 .addStatement("return this.domainEventBus");
 
 
-        MethodSpec.Builder repositorySetter = null;
+        MethodSpec.Builder repositoryGetter = null;
         String repositoryGetterName = getRepositoryGetterName(this.modelType);
         String repositoryFieldName = getRepositoryFieldName(this.modelType);
         if (this.repositoryType != null) {
@@ -78,19 +78,19 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
                     .addModifiers(Modifier.PRIVATE)
                     .addAnnotation(Autowired.class)
                     .build());
-            repositorySetter = MethodSpec.methodBuilder(repositoryGetterName)
+            repositoryGetter = MethodSpec.methodBuilder(repositoryGetterName)
                     .addModifiers(Modifier.PROTECTED)
                     .returns(TypeName.get(this.repositoryType.asType()))
                     .addStatement("return this.$L", repositoryFieldName);
         }else {
-            repositorySetter = MethodSpec.methodBuilder(repositoryGetterName)
+            repositoryGetter = MethodSpec.methodBuilder(repositoryGetterName)
                     .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
                     .returns(ParameterizedTypeName.get(ClassName.get(AggregateRepository.class),
                             ClassName.get(Long.class),
                             ClassName.get(modelType.asType())
                     ));
         }
-        applicationImplBuilder.addMethod(repositorySetter.build());
+        applicationImplBuilder.addMethod(repositoryGetter.build());
 
         applicationImplBuilder.addMethod(eventBusGetter.build());
 

@@ -7,6 +7,8 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 @GenApplication
 public interface NewsInfoRepository extends BaseNewsInfoRepository{
 
@@ -15,4 +17,7 @@ public interface NewsInfoRepository extends BaseNewsInfoRepository{
         Predicate valid = QNewsInfo.newsInfo.status.eq(NewsInfoStatus.ENABLE);
         return findByCategoryId(categoryId, valid, pageable);
     }
+
+    @Override
+    Optional<NewsInfo> getByCode(String code);
 }
