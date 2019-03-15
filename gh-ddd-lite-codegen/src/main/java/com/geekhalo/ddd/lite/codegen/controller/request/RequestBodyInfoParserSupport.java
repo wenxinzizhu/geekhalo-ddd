@@ -9,23 +9,40 @@ import java.util.Map;
 abstract class RequestBodyInfoParserSupport {
     private final String pkg;
     private final String baseClsName;
+    private final String resourceName;
 
     public RequestBodyInfoParserSupport(String pkg,
                                            String baseClsName) {
         this.pkg = pkg;
         this.baseClsName = baseClsName;
+        this.resourceName = getResourceNameFromEndpointName(this.baseClsName);
+    }
+
+    public static String getResourceNameFromEndpointName(String endpointName) {
+        if (endpointName.startsWith("Base")){
+            endpointName = endpointName.substring("Base".length(), endpointName.length());
+        }
+        if (endpointName.endsWith("HttpEndpoint")){
+            endpointName = endpointName.substring(0, endpointName.lastIndexOf("HttpEndpoint"));
+        }
+        if (endpointName.endsWith("Endpoint")){
+            endpointName = endpointName.substring(0, endpointName.lastIndexOf("Endpoint"));
+        }
+        if (endpointName.endsWith("Controller")){
+            endpointName = endpointName.substring(0, endpointName.lastIndexOf("Controller"));
+        }
+        return endpointName;
     }
 
     protected CreatedRequestBody createRequestBody(ExecutableElement method){
 //        String pkg = getPackage(method);
         String requestBodyCls = getRequestBodyCls(method);
-        return new CreatedRequestBody(pkg, requestBodyCls);
+        return new CreatedRequestBody(pkg, baseClsName, requestBodyCls);
     }
 
     private String getRequestBodyCls(ExecutableElement method) {
         String methodName = method.getSimpleName().toString();
-        String cls = baseClsName;
-        return cls +
+        return resourceName +
                 methodName.substring(0, 1).toUpperCase() + methodName.substring(1, methodName.length())
                 + "Req";
     }

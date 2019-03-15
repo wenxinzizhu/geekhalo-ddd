@@ -1,6 +1,5 @@
 package com.geekhalo.ddd.lite.codegen.controller.request;
 
-import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -11,5 +10,5 @@ public interface RequestBodyInfo{
         TypeName getParameterType();
         List<String> getCallParams();
 
-        List<JavaSource> getSubType();
+        List<TypeSpec.Builder> getBodyType();
 }

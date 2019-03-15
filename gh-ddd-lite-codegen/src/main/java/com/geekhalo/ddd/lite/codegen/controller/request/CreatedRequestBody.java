@@ -1,7 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.controller.request;
 
 import com.geekhalo.ddd.lite.codegen.Description;
-import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.google.common.collect.Lists;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiModel;
@@ -12,17 +11,20 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CreatedRequestBody implements RequestBodyInfo {
-    private final String parameterName = "req";
+    private final String parameterName = "body";
     private final String pkg;
+    private final String outClsName;
     private final String reqClsName;
     private final List<String> callParams;
     private final TypeSpec.Builder subTypeBuilder;
 
-    CreatedRequestBody(String pkg, String reqClsName) {
+    CreatedRequestBody(String pkg,
+                       String outClsName,
+                       String reqClsName) {
         this.pkg = pkg;
+        this.outClsName = outClsName;
         this.reqClsName = reqClsName;
 
         this.callParams = Lists.newArrayList();
@@ -31,6 +33,7 @@ public class CreatedRequestBody implements RequestBodyInfo {
 
     private TypeSpec.Builder newSubTypeBuilder() {
         TypeSpec.Builder clsBuilder = TypeSpec.classBuilder(reqClsName);
+        clsBuilder.addModifiers(Modifier.STATIC, Modifier.PUBLIC);
         clsBuilder.addAnnotation(Data.class);
         clsBuilder.addAnnotation(ApiModel.class);
         return clsBuilder;
@@ -43,7 +46,7 @@ public class CreatedRequestBody implements RequestBodyInfo {
 
     @Override
     public TypeName getParameterType() {
-        return ClassName.get(pkg, this.reqClsName);
+        return ClassName.get(pkg, this.outClsName, this.reqClsName);
     }
 
     @Override
@@ -52,9 +55,8 @@ public class CreatedRequestBody implements RequestBodyInfo {
     }
 
     @Override
-    public List<JavaSource> getSubType() {
-        JavaSource javaSource = new JavaSource(pkg, reqClsName, subTypeBuilder);
-        return Arrays.asList(javaSource);
+    public List<TypeSpec.Builder> getBodyType() {
+        return Arrays.asList(subTypeBuilder);
     }
 
 

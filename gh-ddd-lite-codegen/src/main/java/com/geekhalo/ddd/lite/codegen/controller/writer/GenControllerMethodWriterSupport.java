@@ -1,10 +1,10 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
-import com.geekhalo.ddd.lite.codegen.JavaSourceCollector;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
+import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.TypeSpec;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Getter(AccessLevel.PROTECTED)
-abstract class GenControllerMethodWriterSupport {
+abstract class GenControllerMethodWriterSupport implements MethodWriter {
     private final GenControllerAnnotationParser parser;
     private final String pkgName;
     private final List<GenControllerMethodMeta.MethodMeta> methods;
@@ -35,11 +35,12 @@ abstract class GenControllerMethodWriterSupport {
         this.typeCollector = typeCollector;
     }
 
-    public void writeTo(TypeSpec.Builder builder, JavaSourceCollector javaSourceCollector) {
+    @Override
+    public void writeTo(TypeSpec.Builder builder) {
         if (!CollectionUtils.isEmpty(methods)){
             this.methods.stream()
                     .filter(methodMeta -> !methodMeta.isIngnore())
-                    .forEach(executableElement -> writeMethod(executableElement, builder, javaSourceCollector));
+                    .forEach(executableElement -> writeMethod(executableElement, builder));
         }
     }
 
@@ -138,7 +139,7 @@ abstract class GenControllerMethodWriterSupport {
         return (TypeElement) type;
     }
 
-    protected abstract void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder, JavaSourceCollector javaSourceCollector);
+    protected abstract void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder);
 
     protected boolean isBigInter(VariableElement idParams) {
         return idParams.asType().toString().equals(BigInteger.class.getName());

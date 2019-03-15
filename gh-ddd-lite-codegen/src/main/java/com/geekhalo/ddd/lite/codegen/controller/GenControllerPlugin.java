@@ -39,13 +39,13 @@ public final class GenControllerPlugin
 
         new GenControllerCreateMethodWriter(parser,
                 methodMeta.getCreateMethods(), this.getTypeCollector())
-                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
+                .writeTo(support.getTypeSpecBuilder());
         new GenControllerUpdateMethodWriter(parser,
                 methodMeta.getUpdateMethods(), this.getTypeCollector())
-                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
+                .writeTo(support.getTypeSpecBuilder());
         new GenControllerSelectMethodWriter(parser,
                 methodMeta.getQueryMethods(), getTypeCollector())
-                .writeTo(support.getTypeSpecBuilder(), getJavaSourceCollector());
+                .writeTo(support.getTypeSpecBuilder());
 
     }
 
