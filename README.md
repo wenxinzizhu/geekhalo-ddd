@@ -1,3 +1,5 @@
+DDD 战术模式详见: https://www.geekhalo.com/categories/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/%E6%88%98%E6%9C%AF%E6%A8%A1%E5%BC%8F/
+
 ### geekhalo-ddd
 > geekhalo ddd 项目，主要对 DDD 相关理念进行抽象，并提供多种基础服务。
 
