@@ -1,3 +1,7 @@
+
+最新动态，请关照公众号 
+![公众号](http://litao851025.gitee.io/books-image/weixin/qrcode.jpg)
+
 DDD 战术模式详见: 
 [战术模式](https://www.geekhalo.com/categories/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/%E6%88%98%E6%9C%AF%E6%A8%A1%E5%BC%8F/)
 
