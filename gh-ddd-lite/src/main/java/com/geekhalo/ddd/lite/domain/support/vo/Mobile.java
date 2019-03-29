@@ -15,9 +15,9 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Mobile implements ValueObject {
     public static final String DEFAULT_DCC = "0086";
-    @Column(name = "dcc")
+    @Column(length = 6)
     private String dcc;
-    @Column(name = "mobile")
+    @Column(length = 15)
     private String mobile;
 
 
