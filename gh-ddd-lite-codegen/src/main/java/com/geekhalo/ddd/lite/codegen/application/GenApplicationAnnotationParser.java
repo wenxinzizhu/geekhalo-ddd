@@ -18,7 +18,7 @@ public final class GenApplicationAnnotationParser {
     private static final String REPOSITORY = "Repository";
     private final TypeElement typeElement;
 
-    private boolean enable = true;
+//    private boolean enable = true;
 
     private boolean repository;
     private String modelName;
@@ -29,9 +29,14 @@ public final class GenApplicationAnnotationParser {
     private String fullRepositoryName;
 
     private boolean genImpl;
+    private boolean genIfc;
 
     public GenApplicationAnnotationParser(TypeElement typeElement) {
         this.typeElement = typeElement;
+    }
+
+    public boolean genIfc(){
+        return this.genIfc;
     }
 
     public boolean genImp(){
@@ -59,6 +64,7 @@ public final class GenApplicationAnnotationParser {
         this.impName = getDefaultImpName();
         this.supperClassName = getDefaultSupperClassName();
         this.genImpl = true;
+        this.genIfc = false;
     }
 
     private void readFromGenApplication(GenApplication annotation) {
@@ -77,6 +83,7 @@ public final class GenApplicationAnnotationParser {
         this.impName = initImpName(annotation);
         this.supperClassName = initSupperClassName(annotation);
         this.genImpl = annotation.genImpl();
+        this.genIfc = annotation.genIfc();
     }
 
 

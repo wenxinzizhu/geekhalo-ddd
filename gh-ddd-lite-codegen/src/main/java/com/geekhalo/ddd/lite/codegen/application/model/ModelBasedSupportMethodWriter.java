@@ -1,10 +1,10 @@
 package com.geekhalo.ddd.lite.codegen.application.model;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.lang.model.element.ExecutableElement;
@@ -21,9 +21,9 @@ public final class ModelBasedSupportMethodWriter implements MethodWriter {
     }
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
-        this.methodMeta.getCreateMethods().forEach(executableElement-> builder.addMethod(createCreateImpl(executableElement)));
-        this.methodMeta.getUpdateMethods().forEach(executableElement -> builder.addMethod(createUpdateImpl(executableElement)));
+    public void writeTo(JavaSource javaSource) {
+        this.methodMeta.getCreateMethods().forEach(executableElement-> javaSource.addMethod(createCreateImpl(executableElement)));
+        this.methodMeta.getUpdateMethods().forEach(executableElement -> javaSource.addMethod(createUpdateImpl(executableElement)));
     }
 
     private MethodSpec createCreateImpl(ExecutableElement executableElement){

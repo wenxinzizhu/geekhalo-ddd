@@ -1,11 +1,11 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
-import com.squareup.javapoet.TypeSpec;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.util.CollectionUtils;
@@ -36,11 +36,11 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
     }
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
+    public void writeTo(JavaSource javaSource) {
         if (!CollectionUtils.isEmpty(methods)){
             this.methods.stream()
                     .filter(methodMeta -> !methodMeta.isIngnore())
-                    .forEach(executableElement -> writeMethod(executableElement, builder));
+                    .forEach(executableElement -> writeMethod(executableElement, javaSource));
         }
     }
 
@@ -139,7 +139,7 @@ abstract class GenControllerMethodWriterSupport implements MethodWriter {
         return (TypeElement) type;
     }
 
-    protected abstract void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder);
+    protected abstract void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource);
 
     protected boolean isBigInter(VariableElement idParams) {
         return idParams.asType().toString().equals(BigInteger.class.getName());

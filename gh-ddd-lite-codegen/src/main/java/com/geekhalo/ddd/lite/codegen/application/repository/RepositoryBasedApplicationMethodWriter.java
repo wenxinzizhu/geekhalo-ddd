@@ -1,8 +1,8 @@
 package com.geekhalo.ddd.lite.codegen.application.repository;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
 import lombok.Data;
 
 import javax.lang.model.element.ExecutableElement;
@@ -17,8 +17,8 @@ public final class RepositoryBasedApplicationMethodWriter implements MethodWrite
     private final RepositoryBasedMethodMeta methodMeta;
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
-        methodMeta.getQueryMethods().forEach(executableElement -> builder.addMethod(createQueryMethod(executableElement)));
+    public void writeTo(JavaSource javaSource) {
+        methodMeta.getQueryMethods().forEach(executableElement -> javaSource.addMethod(createQueryMethod(executableElement)));
     }
 
     private MethodSpec createQueryMethod(ExecutableElement executableElement) {

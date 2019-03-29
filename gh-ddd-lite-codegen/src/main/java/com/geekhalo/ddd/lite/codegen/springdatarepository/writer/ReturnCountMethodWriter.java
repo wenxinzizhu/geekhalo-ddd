@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.springdatarepository.writer;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryMeta;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.ParamElement;
 import com.google.common.collect.Lists;
@@ -7,7 +8,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -21,7 +21,7 @@ public class ReturnCountMethodWriter
     }
 
     @Override
-    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
         if (isFull && unique){
             return;
         }
@@ -54,12 +54,12 @@ public class ReturnCountMethodWriter
             methodSpecBuilder.addStatement("return this.count(booleanBuilder.getValue())",
                     ClassName.get(Lists.class));
 
-            builder.addMethod(methodSpecBuilder.build());
+            javaSource.addMethod(methodSpecBuilder.build());
         }
     }
 
     @Override
-    protected void writeMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
         if (isFull && unique){
             return;
         }
@@ -73,7 +73,7 @@ public class ReturnCountMethodWriter
             paramElements.forEach(element -> {
                 methodSpecBuilder.addParameter(element.getTypeName(), element.getName());
             });
-            builder.addMethod(methodSpecBuilder.build());
+            javaSource.addMethod(methodSpecBuilder.build());
         }
     }
 

@@ -26,12 +26,15 @@ public class GenRepositoryPlugin extends AbstractProcessorPlugin {
         GenRepositoryBuilderFactory builderFactory = new GenRepositoryBuilderFactory(genRepositoryMeta);
         TypeSpec.Builder repositoryBuilder =  builderFactory.create();
 
-        new ReturnCountMethodWriter(genRepositoryMeta).writeTo(repositoryBuilder);
-        new ReturnListMethodWriter(genRepositoryMeta).writeTo(repositoryBuilder);
-        new ReturnPageMethodWriter(genRepositoryMeta).writeTo(repositoryBuilder);
-        new ReturnOptinalMethodWriter(genRepositoryMeta).writeTo(repositoryBuilder);
+        JavaSource javaSource = new JavaSource(genRepositoryMeta.getPkgName(), genRepositoryMeta.getClsName(), repositoryBuilder);
+        getJavaSourceCollector().register(javaSource);
 
-        getJavaSourceCollector().register(new JavaSource(genRepositoryMeta.getPkgName(), genRepositoryMeta.getClsName(), repositoryBuilder));
+        new ReturnCountMethodWriter(genRepositoryMeta).writeTo(javaSource);
+        new ReturnListMethodWriter(genRepositoryMeta).writeTo(javaSource);
+        new ReturnPageMethodWriter(genRepositoryMeta).writeTo(javaSource);
+        new ReturnOptinalMethodWriter(genRepositoryMeta).writeTo(javaSource);
+
+
     }
 
     @Override

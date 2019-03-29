@@ -1,11 +1,11 @@
 package com.geekhalo.ddd.lite.codegen.springdatarepository.writer;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryMeta;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.ParamElement;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.squareup.javapoet.TypeSpec;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ abstract class RepositoryMethodWriterSupport implements MethodWriter {
     }
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
+    public void writeTo(JavaSource javaSource) {
         for (GenRepositoryMeta.IndexMeta indexMeta : repositoryMeta.getIndices()){
             for (int i = 0; i< indexMeta.getParams().size(); i++){
                 boolean isFull = i == indexMeta.getParams().size() - 1;
@@ -39,9 +39,9 @@ abstract class RepositoryMethodWriterSupport implements MethodWriter {
                     createdMethods.add(methodKey);
                 }
 
-                writeMethodTo(paramElements, builder, indexMeta.isUnique(), isFull);
+                writeMethodTo(paramElements, javaSource, indexMeta.isUnique(), isFull);
                 if (this.repositoryMeta.isUseQueryDsl()){
-                    writeQueryDslMethodTo(paramElements, builder, indexMeta.isUnique(), isFull);
+                    writeQueryDslMethodTo(paramElements, javaSource, indexMeta.isUnique(), isFull);
                 }
             }
         }
@@ -51,9 +51,9 @@ abstract class RepositoryMethodWriterSupport implements MethodWriter {
         return formatName(paramElements);
     }
 
-    protected abstract void writeQueryDslMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull);
+    protected abstract void writeQueryDslMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull);
 
-    protected abstract void writeMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull);
+    protected abstract void writeMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull);
 
     protected String formatName(List<ParamElement> elements) {
         return elements.stream()

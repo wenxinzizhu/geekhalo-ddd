@@ -15,6 +15,7 @@ import static com.geekhalo.ddd.lite.codegen.application.Utils.getRepositoryGette
 
 public final class ApplicationSupportBuilderFactory implements TypeBuilderFactory {
     private final String className;
+    private final boolean genIfc;
     private final String superClassName;
     private final String ifcFullName;
     private final TypeElement modelType;
@@ -22,13 +23,14 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
     private final boolean createDefaultElement;
 
     public ApplicationSupportBuilderFactory(
-                                            String className,
-                                            String superClassName,
-                                            String ifcFullName,
-                                            TypeElement modelType,
-                                            TypeElement repositoryType,
-                                            boolean createDefaultElement) {
+            String className,
+            boolean genIfc, String superClassName,
+            String ifcFullName,
+            TypeElement modelType,
+            TypeElement repositoryType,
+            boolean createDefaultElement) {
         this.className = className;
+        this.genIfc = genIfc;
         this.superClassName = superClassName;
         this.ifcFullName = ifcFullName;
         this.modelType = modelType;
@@ -40,8 +42,10 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
     public TypeSpec.Builder create() {
         TypeSpec.Builder builder = TypeSpec.classBuilder(className)
                     .addModifiers(Modifier.ABSTRACT)
-                    .superclass(ClassName.bestGuess(superClassName))
-                    .addSuperinterface(ClassName.bestGuess(ifcFullName));
+                    .superclass(ClassName.bestGuess(superClassName));
+        if (this.genIfc) {
+                    builder.addSuperinterface(ClassName.bestGuess(ifcFullName));
+        }
         if (createDefaultElement){
             writeDefaultElements(builder);
         }

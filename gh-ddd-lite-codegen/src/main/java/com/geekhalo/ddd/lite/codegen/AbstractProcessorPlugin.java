@@ -58,7 +58,7 @@ public abstract class AbstractProcessorPlugin implements ProcessorPlugin{
 
     private void createJavaFile(Filer filer, JavaSource javaSource) {
         try {
-            JavaFile javaFile = JavaFile.builder(javaSource.getPkgName(), javaSource.getTypeSpecBuilder().build())
+            JavaFile javaFile = JavaFile.builder(javaSource.getPkgName(), javaSource.getTypeSpec())
                     .addFileComment(" This codes are generated automatically. Do not modify!")
                     .build();
             javaFile.writeTo(filer);

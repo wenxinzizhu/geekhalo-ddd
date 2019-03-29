@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.application.repository;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,19 +32,19 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
     }
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
-        bindConverterMethod(builder);
+    public void writeTo(JavaSource javaSource) {
+        bindConverterMethod(javaSource);
         methodMeta.getQueryMethods().forEach(executableElement -> {
             {
                 MethodSpec method = createSupportMethod1(executableElement);
                 if (method != null) {
-                    builder.addMethod(method);
+                    javaSource.addMethod(method);
                 }
             }
             {
                 MethodSpec method = createSupportMethod(executableElement);
                 if (method != null) {
-                    builder.addMethod(method);
+                    javaSource.addMethod(method);
                 }
             }
         });
@@ -156,7 +157,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
         return methodBuilder.build();
     }
 
-    private void bindConverterMethod(TypeSpec.Builder support) {
+    private void bindConverterMethod(JavaSource javaSource) {
 
         MethodSpec covertMethodList = MethodSpec.methodBuilder(convertList)
                 .addModifiers(Modifier.PROTECTED)
@@ -169,7 +170,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                 .addStatement("if ($T.isEmpty(src)) return $T.emptyList()", ClassName.get(CollectionUtils.class), ClassName.get(Collections.class))
                 .addStatement("return src.stream().map(converter).collect($T.toList())", ClassName.get(Collectors.class))
                 .build();
-        support.addMethod(covertMethodList);
+        javaSource.addMethod(covertMethodList);
 
         MethodSpec convertMethodPage = MethodSpec.methodBuilder(convertPage)
                 .addModifiers(Modifier.PROTECTED)
@@ -181,7 +182,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                 .addParameter(ParameterizedTypeName.get(ClassName.get(Function.class),ClassName.get(methodMeta.getModelType()), TypeVariableName.get("T")), "converter")
                 .addStatement("return src.map(converter)")
                 .build();
-        support.addMethod(convertMethodPage);
+        javaSource.addMethod(convertMethodPage);
 
 
 
@@ -190,7 +191,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                 .returns(ClassName.get(methodMeta.getModelVoType()))
                 .addParameter(ClassName.get(methodMeta.getModelType()), "src")
                 .build();
-        support.addMethod(convertMethod);
+        javaSource.addMethod(convertMethod);
 
 
 
@@ -202,7 +203,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                         ClassName.get(methodMeta.getModelType())), "src")
                 .addStatement("return $L(src, this::$L)", convertList, convert)
                 .build();
-        support.addMethod(listConvertMethod);
+        javaSource.addMethod(listConvertMethod);
 
         MethodSpec pageConvertMethod = MethodSpec.methodBuilder(convertPage)
                 .addModifiers(Modifier.PROTECTED)
@@ -212,6 +213,6 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                         ClassName.get(methodMeta.getModelType())), "src")
                 .addStatement("return $L(src, this::$L)", convertPage, convert)
                 .build();
-        support.addMethod(pageConvertMethod);
+        javaSource.addMethod(pageConvertMethod);
     }
 }

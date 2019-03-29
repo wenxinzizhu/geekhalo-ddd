@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
@@ -29,7 +30,7 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
     }
 
     @Override
-    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder typeBuilder) {
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource typeBuilder) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -48,7 +49,7 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
         RequestBodyInfo requestBodyInfo = new CreateMethodRequestBodyParser(getPkgName(), getBaseClassName())
                 .parseForMethod(executableElement.getExecutableElement());
 
-        requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+        requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addType(innerBuilder.build()));
 
         methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                 .addAnnotation(RequestBody.class)

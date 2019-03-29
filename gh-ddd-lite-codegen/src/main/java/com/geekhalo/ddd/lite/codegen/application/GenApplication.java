@@ -12,5 +12,6 @@ public @interface GenApplication {
     String interfaceName() default "";
     String implementName() default "";
     String superClassName() default "";
+    boolean genIfc() default false;
     boolean genImpl() default true;
 }

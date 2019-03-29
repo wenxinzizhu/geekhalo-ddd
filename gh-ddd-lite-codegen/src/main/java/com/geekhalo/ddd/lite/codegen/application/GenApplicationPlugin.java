@@ -37,88 +37,83 @@ public final class GenApplicationPlugin
         if (annotation instanceof EnableGenForAggregate && typeElement.getModifiers().contains(Modifier.ABSTRACT)){
             return;
         }
-        GenApplicationAnnotationParser genApplicationAnnotationParser = new GenApplicationAnnotationParser(typeElement);
 
-        genApplicationAnnotationParser.read(annotation);
+        GenApplicationAnnotationParser parser = new GenApplicationAnnotationParser(typeElement);
 
-        String name = typeElement.getQualifiedName().toString();
-        boolean isRepository = genApplicationAnnotationParser.isRepository();
-        String modelName = genApplicationAnnotationParser.getModelName();
+        parser.read(annotation);
 
 
+        String modelName = parser.getModelName();
         TypeElement modelType = getTypeCollector().getByName(modelName);
         if (modelType == null){
             LOGGER.error("failed to find model type {}.", modelName);
             return;
-//            throw new IllegalArgumentException(
-//                    String.format("can not find model type %s", modelName)
-//            );
         }
-        String modelVo = genApplicationAnnotationParser.getFullModelDtoName();
-        TypeElement modelVoType = getTypeCollector().getByName(modelVo);
-        if (isRepository && modelVoType == null){
-            LOGGER.error("failed to find model type {}.", modelVo);
+        String modelDtoName = parser.getFullModelDtoName();
+        TypeElement modelVoType = getTypeCollector().getByName(modelDtoName);
+        if (parser.isRepository() && modelVoType == null){
+            LOGGER.error("failed to find model type {}.", modelDtoName);
             return;
-//            throw new IllegalArgumentException(
-//                    String.format("can not find model type %s", modelVo)
-//            );
-        }
-        String pkgName = genApplicationAnnotationParser.getPkgName();
-        String ifcName = genApplicationAnnotationParser.getIfcName();
-        String ifcFullName = genApplicationAnnotationParser.getFullIfcName();
-
-        String impName = genApplicationAnnotationParser.getImpName();
-        String impFullName = genApplicationAnnotationParser.getFullImplName();
-
-
-        JavaSource ifcJavaSource = getJavaSourceCollector().getByName(ifcFullName);
-        if (ifcJavaSource == null){
-            TypeSpec.Builder builder = new ApplicationBuilderFactory(ifcName).create();
-            ifcJavaSource = new JavaSource(pkgName, ifcName, builder);
-            getJavaSourceCollector().register(ifcFullName, ifcJavaSource);
         }
 
-        JavaSource impJavaSource = null;
-        if (genApplicationAnnotationParser.genImp()) {
-            impJavaSource = getJavaSourceCollector().getByName(impFullName);
-            if (impJavaSource == null) {
-                TypeBuilderFactory factory = new ApplicationSupportBuilderFactory(impName,
-                        genApplicationAnnotationParser.getSuperClassName(),
-                        ifcFullName,
-                        modelType,
-                        getTypeCollector().getByName(genApplicationAnnotationParser.getFullRepositoryName()),
-                        true);
-                impJavaSource = new JavaSource(genApplicationAnnotationParser.getImpPkg(), impName, factory.create());
-                getJavaSourceCollector().register(impFullName, impJavaSource);
-            }
-        }
-
-        if (!isRepository){
-            ModelBasedMethodMeta modelBasedMethodMeta = this.modelBasedMethodMetaParser.parse(modelType, getTypeCollector());
-            {
-                ModelBasedApplicationMethodWriter writer = new ModelBasedApplicationMethodWriter(modelBasedMethodMeta);
-                writer.writeTo(ifcJavaSource.getTypeSpecBuilder());
-            }
-            {
-                ModelBasedSupportMethodWriter writer = new ModelBasedSupportMethodWriter(modelBasedMethodMeta);
-                writer.writeTo(impJavaSource.getTypeSpecBuilder());
-            }
-        }else {
+        if (parser.isRepository()){
             RepositoryBasedMethodMeta methodMeta = this.repositoryBasedMethodMetaParser.parse(modelType, modelVoType, typeElement);
-            {
+            if (parser.genIfc()){
+                JavaSource ifcJavaSource = createIfcJavaSource(parser);
                 RepositoryBasedApplicationMethodWriter writer = new RepositoryBasedApplicationMethodWriter(methodMeta);
-                writer.writeTo(ifcJavaSource.getTypeSpecBuilder());
+                writer.writeTo(ifcJavaSource);
             }
 
-            {
+            if (parser.genImp()){
+                JavaSource impJavaSource = createSupportJavaSource(parser, modelType);
                 RepositoryBasedSupportMethodWriter writer = new RepositoryBasedSupportMethodWriter(methodMeta);
-                writer.writeTo(impJavaSource.getTypeSpecBuilder());
+                writer.writeTo(impJavaSource);
+            }
+
+        }else {
+            ModelBasedMethodMeta modelBasedMethodMeta = this.modelBasedMethodMetaParser.parse(modelType, getTypeCollector());
+            if (parser.genIfc()){
+                JavaSource ifcJavaSource = createIfcJavaSource(parser);
+                ModelBasedApplicationMethodWriter writer = new ModelBasedApplicationMethodWriter(modelBasedMethodMeta);
+                writer.writeTo(ifcJavaSource);
+            }
+            if (parser.genImp()){
+                JavaSource impJavaSource = createSupportJavaSource(parser, modelType);
+                ModelBasedSupportMethodWriter writer = new ModelBasedSupportMethodWriter(modelBasedMethodMeta);
+                writer.writeTo(impJavaSource);
             }
 
         }
 
     }
 
+    private JavaSource createSupportJavaSource(GenApplicationAnnotationParser parser, TypeElement modelType) {
+        JavaSource impJavaSource = getJavaSourceCollector().getByName(parser.getFullImplName());
+        if (impJavaSource == null) {
+            TypeBuilderFactory factory = new ApplicationSupportBuilderFactory(parser.getImpName(),
+                    parser.genIfc(),
+                    parser.getSuperClassName(),
+                    parser.getFullIfcName(),
+                    modelType,
+                    getTypeCollector().getByName(parser.getFullRepositoryName()),
+                    true);
+            impJavaSource = new JavaSource(parser.getImpPkg(), parser.getImpName(), factory.create());
+            getJavaSourceCollector().register(parser.getFullImplName(), impJavaSource);
+        }
+        return impJavaSource;
+
+    }
+
+    private JavaSource createIfcJavaSource(GenApplicationAnnotationParser parser){
+        JavaSource ifcJavaSource = getJavaSourceCollector().getByName(parser.getFullIfcName());
+        if (ifcJavaSource == null) {
+            TypeSpec.Builder builder = new ApplicationBuilderFactory(parser.getIfcName()).create();
+            ifcJavaSource = new JavaSource(parser.getPkgName(), parser.getIfcName(), builder);
+            getJavaSourceCollector().register(parser.getFullIfcName(), ifcJavaSource);
+
+        }
+        return ifcJavaSource;
+    }
 
     @Override
     public <A extends Annotation> Class<A>[] ignoreAnnCls() {

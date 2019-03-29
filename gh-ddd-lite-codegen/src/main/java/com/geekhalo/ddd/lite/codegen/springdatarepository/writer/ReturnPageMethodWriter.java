@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.springdatarepository.writer;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryMeta;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.ParamElement;
 import com.google.common.collect.Lists;
@@ -21,7 +22,7 @@ public class ReturnPageMethodWriter extends RepositoryMethodWriterSupport {
     }
 
     @Override
-    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
         if (isFull && unique){
             return;
         }
@@ -56,12 +57,12 @@ public class ReturnPageMethodWriter extends RepositoryMethodWriterSupport {
             methodSpecBuilder.addStatement("return findAll(booleanBuilder.getValue(), pageable)",
                     ClassName.get(Lists.class));
 
-            builder.addMethod(methodSpecBuilder.build());
+            javaSource.addMethod(methodSpecBuilder.build());
         }
     }
 
     @Override
-    protected void writeMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
         if (isFull && unique){
             return;
         }
@@ -75,7 +76,7 @@ public class ReturnPageMethodWriter extends RepositoryMethodWriterSupport {
                 methodSpecBuilder.addParameter(element.getTypeName(), element.getName());
             });
             methodSpecBuilder.addParameter(ClassName.get(Pageable.class), "pageable");
-            builder.addMethod(methodSpecBuilder.build());
+            javaSource.addMethod(methodSpecBuilder.build());
         }
     }
 }

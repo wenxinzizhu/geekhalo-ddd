@@ -1,9 +1,9 @@
 package com.geekhalo.ddd.lite.codegen.application.model;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -18,10 +18,10 @@ public final class ModelBasedApplicationMethodWriter implements MethodWriter {
     }
 
     @Override
-    public void writeTo(TypeSpec.Builder builder) {
-        this.methodMeta.getCreateMethods().forEach(executableElement -> builder.addMethod(createCreateMethod(executableElement)));
+    public void writeTo(JavaSource javaSource) {
+        this.methodMeta.getCreateMethods().forEach(executableElement -> javaSource.addMethod(createCreateMethod(executableElement)));
 
-        this.methodMeta.getUpdateMethods().forEach(executableElement -> builder.addMethod(createUpdateMethod(executableElement)));
+        this.methodMeta.getUpdateMethods().forEach(executableElement -> javaSource.addMethod(createUpdateMethod(executableElement)));
     }
 
     private MethodSpec createCreateMethod(ExecutableElement executableElement){

@@ -1,5 +1,6 @@
 package com.geekhalo.ddd.lite.codegen.springdatarepository.writer;
 
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.GenRepositoryMeta;
 import com.geekhalo.ddd.lite.codegen.springdatarepository.ParamElement;
 import com.squareup.javapoet.*;
@@ -14,12 +15,12 @@ public class ReturnOptinalMethodWriter extends RepositoryMethodWriterSupport{
     }
 
     @Override
-    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeQueryDslMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
 
     }
 
     @Override
-    protected void writeMethodTo(List<ParamElement> paramElements, TypeSpec.Builder builder, boolean unique, boolean isFull) {
+    protected void writeMethodTo(List<ParamElement> paramElements, JavaSource javaSource, boolean unique, boolean isFull) {
         if (isFull && unique) {
             String methodName = "getBy" + formatName(paramElements);
 
@@ -31,7 +32,7 @@ public class ReturnOptinalMethodWriter extends RepositoryMethodWriterSupport{
                 methodSpecBuilder.addParameter(element.getTypeName(), element.getName());
             });
 
-            builder.addMethod(methodSpecBuilder.build());
+            javaSource.addMethod(methodSpecBuilder.build());
         }
     }
 }

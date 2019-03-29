@@ -1,7 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.support;
 
-import com.squareup.javapoet.TypeSpec;
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 
 public interface MethodWriter {
-    void writeTo(TypeSpec.Builder builder);
+    void writeTo(JavaSource javaSource);
 }

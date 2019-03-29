@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.controller.writer;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.codegen.JavaSource;
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerAnnotationParser;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
@@ -31,21 +32,21 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
     }
 
     @Override
-    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder builder) {
+    protected void writeMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
         if (isGetByIdMethod(executableElement.getExecutableElement())){
-            writeGetByIdMethod(executableElement, builder);
+            writeGetByIdMethod(executableElement, javaSource);
         }else if (isListMethod(executableElement.getExecutableElement())){
-            writeListMethod(executableElement, builder);
+            writeListMethod(executableElement, javaSource);
         }else if (isPageMethod(executableElement.getExecutableElement())){
-            writePageMethod(executableElement, builder);
+            writePageMethod(executableElement, javaSource);
         }else if (isOptionalMethod(executableElement.getExecutableElement())){
-            writeOptionalMethod(executableElement, builder);
+            writeOptionalMethod(executableElement, javaSource);
         }else {
             LOGGER.warn("failed to write method for {}", executableElement.getMethodName());
         }
     }
 
-    private void writeOptionalMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder typeBuilder) {
+    private void writeOptionalMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -64,7 +65,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         String returnType = executableElement.getReturnType().toString();
         RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                 .parseForMethod(executableElement.getExecutableElement());
-        requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+        requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
         if (requestBodyInfo != null){
             methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                     .addAnnotation(RequestBody.class)
@@ -94,10 +95,10 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
             }
         }
 
-        typeBuilder.addMethod(methodBuilder.build());
+        javaSource.addMethod(methodBuilder.build());
     }
 
-    private void writeGetByIdMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder typeBuilder) {
+    private void writeGetByIdMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -158,7 +159,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
             }
         }
 
-        typeBuilder.addMethod(methodBuilder.build());
+        javaSource.addMethod(methodBuilder.build());
     }
 
 
@@ -174,7 +175,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         return returnType.startsWith("java.util.Optional");
     }
 
-    private MethodSpec.Builder writeListMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder typeBuilder) {
+    private MethodSpec.Builder writeListMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -195,7 +196,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             if (requestBodyInfo != null) {
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -214,7 +215,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             if (requestBodyInfo != null) {
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -232,7 +233,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
     }
 
 
-    private void writePageMethod(GenControllerMethodMeta.MethodMeta executableElement, TypeSpec.Builder typeBuilder) {
+    private void writePageMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
         String methodName = executableElement.getMethodName();
         Description description = executableElement.getDescription();
         String descriptionStr = description != null ? description.value() : "";
@@ -257,7 +258,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             if (requestBodyInfo != null) {
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -278,7 +279,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> typeBuilder.addTypes(Arrays.asList(innerBuilder.build())));
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             if (requestBodyInfo != null) {
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
@@ -293,7 +294,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         methodName);
             }
         }
-        typeBuilder.addMethod(methodBuilder.build());
+        javaSource.addMethod(methodBuilder.build());
     }
 
 }
