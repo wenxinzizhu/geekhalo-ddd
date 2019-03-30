@@ -57,9 +57,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
                         .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
-                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
         String returnType = executableElement.getReturnType().toString();
@@ -109,9 +108,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(GetMapping.class)
                         .addMember("value", "\"/{id}\"")
-                        .addMember("method", "$T.GET", ClassName.get(RequestMethod.class))
+
                         .build());
         VariableElement idParams = getIdParam(executableElement.getExecutableElement());
         if (isLong(idParams)) {
@@ -186,9 +185,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
                         .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
-                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
         if (getParser().isWrapper()){
@@ -244,9 +242,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
                         .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
-                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
         ClassName type = ClassName.bestGuess(this.getTypeFromPage(executableElement.getReturnType().toString()));
