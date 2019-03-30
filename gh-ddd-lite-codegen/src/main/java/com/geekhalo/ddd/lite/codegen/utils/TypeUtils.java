@@ -9,12 +9,14 @@ import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoAggregate;
 import com.geekhalo.ddd.lite.domain.support.mongo.IdentitiedMongoEntity;
 import com.geekhalo.ddd.lite.domain.support.mongo.MongoAggregate;
 import com.geekhalo.ddd.lite.domain.support.mongo.MongoEntity;
+import com.google.common.collect.Lists;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,13 @@ public class TypeUtils {
                 .build();
     }
 
+    public static String createParamListStr(List<String> params){
+        List<String> result = Lists.newArrayList();
+        result.addAll(params);
+        return result.stream()
+                .collect(Collectors.joining(","));
+    }
+
     public static String createParamListStr(ExecutableElement executableElement, String... beforeParam) {
         List<String> parm = executableElement.getParameters().stream()
                 .map(varElement -> varElement.getSimpleName().toString())
@@ -67,8 +76,8 @@ public class TypeUtils {
                 .collect(Collectors.joining(", "));
     }
 
-    public static String createParamVarStr(ExecutableElement executableElement){
-        return executableElement.getParameters().stream()
+    public static String createParamVarStr(List<String> params){
+        return params.stream()
                 .map(varElement -> "{}")
                 .collect(Collectors.joining(", "));
     }
@@ -153,5 +162,9 @@ public class TypeUtils {
     public static String getClassNameFromFullClassName(String fullClassName){
         return fullClassName.substring(fullClassName.lastIndexOf('.') + 1, fullClassName.length());
 
+    }
+
+    public static String getFieldNameFromType(String type) {
+        return type.substring(0, 1).toLowerCase() + type.substring(1);
     }
 }

@@ -18,23 +18,19 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
     private final boolean genIfc;
     private final String superClassName;
     private final String ifcFullName;
-    private final TypeElement modelType;
-    private final TypeElement repositoryType;
+//    private final TypeElement modelType;
+//    private final TypeElement repositoryType;
     private final boolean createDefaultElement;
 
     public ApplicationSupportBuilderFactory(
             String className,
             boolean genIfc, String superClassName,
             String ifcFullName,
-            TypeElement modelType,
-            TypeElement repositoryType,
             boolean createDefaultElement) {
         this.className = className;
         this.genIfc = genIfc;
         this.superClassName = superClassName;
         this.ifcFullName = ifcFullName;
-        this.modelType = modelType;
-        this.repositoryType = repositoryType;
         this.createDefaultElement = createDefaultElement;
     }
 
@@ -72,29 +68,6 @@ public final class ApplicationSupportBuilderFactory implements TypeBuilderFactor
                 .addModifiers(Modifier.PROTECTED)
                 .returns(ClassName.get(DomainEventBus.class))
                 .addStatement("return this.domainEventBus");
-
-
-        MethodSpec.Builder repositoryGetter = null;
-        String repositoryGetterName = getRepositoryGetterName(this.modelType);
-        String repositoryFieldName = getRepositoryFieldName(this.modelType);
-        if (this.repositoryType != null) {
-            applicationImplBuilder.addField(FieldSpec.builder(TypeName.get(this.repositoryType.asType()), repositoryFieldName)
-                    .addModifiers(Modifier.PRIVATE)
-                    .addAnnotation(Autowired.class)
-                    .build());
-            repositoryGetter = MethodSpec.methodBuilder(repositoryGetterName)
-                    .addModifiers(Modifier.PROTECTED)
-                    .returns(TypeName.get(this.repositoryType.asType()))
-                    .addStatement("return this.$L", repositoryFieldName);
-        }else {
-            repositoryGetter = MethodSpec.methodBuilder(repositoryGetterName)
-                    .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
-                    .returns(ParameterizedTypeName.get(ClassName.get(AggregateRepository.class),
-                            ClassName.get(Long.class),
-                            ClassName.get(modelType.asType())
-                    ));
-        }
-        applicationImplBuilder.addMethod(repositoryGetter.build());
 
         applicationImplBuilder.addMethod(eventBusGetter.build());
 

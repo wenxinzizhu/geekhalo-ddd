@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 
+import static com.geekhalo.ddd.lite.codegen.application.Utils.getApplicationMethodName;
 import static com.geekhalo.ddd.lite.codegen.application.repository.Utils.getReturnTypeName;
 import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.bindDescription;
 import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.createParameterSpecFromElement;
@@ -18,11 +19,12 @@ public final class RepositoryBasedApplicationMethodWriter implements MethodWrite
 
     @Override
     public void writeTo(JavaSource javaSource) {
-        methodMeta.getQueryMethods().forEach(executableElement -> javaSource.addMethod(createQueryMethod(executableElement)));
+        methodMeta.getQueryMethods()
+                .forEach(executableElement -> javaSource.addMethod(createQueryMethod(executableElement)));
     }
 
     private MethodSpec createQueryMethod(ExecutableElement executableElement) {
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(getApplicationMethodName(executableElement))
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .returns(getReturnTypeName(executableElement.getReturnType(), methodMeta));
         bindDescription(executableElement, methodBuilder);

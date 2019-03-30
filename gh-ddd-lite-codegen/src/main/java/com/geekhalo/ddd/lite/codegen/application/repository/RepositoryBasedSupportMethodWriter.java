@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.geekhalo.ddd.lite.codegen.application.Utils.getApplicationMethodName;
 import static com.geekhalo.ddd.lite.codegen.application.Utils.getRepositoryGetterName;
 import static com.geekhalo.ddd.lite.codegen.application.repository.Utils.*;
 import static com.geekhalo.ddd.lite.codegen.utils.TypeUtils.*;
@@ -58,7 +59,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
             if (returnTypeName == null){
                 return null;
             }
-            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(getApplicationMethodName(executableElement))
                     .addModifiers(Modifier.PUBLIC)
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addAnnotation(AnnotationSpec.builder(Transactional.class)
@@ -109,7 +110,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
 
     private MethodSpec createSupportMethod(ExecutableElement executableElement){
         TypeMirror returnType = executableElement.getReturnType();
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(getApplicationMethodName(executableElement))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(AnnotationSpec.builder(Transactional.class)
                         .addMember("readOnly", "true")

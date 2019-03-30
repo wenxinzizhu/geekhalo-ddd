@@ -29,7 +29,11 @@ public final class GenApplicationPlugin
 
     @Override
     public Class<? extends Annotation>[] applyAnnCls() {
-        return new Class[]{EnableGenForAggregate.class, GenApplication.class};
+        return new Class[]{
+                GenSingleApplication.class,
+                GenMixedApplication.class,
+                GenApplication.class,
+                EnableGenForAggregate.class};
     }
 
     @Override
@@ -65,7 +69,11 @@ public final class GenApplicationPlugin
             }
 
             if (parser.genImp()){
-                JavaSource impJavaSource = createSupportJavaSource(parser, modelType);
+                JavaSource impJavaSource = createSupportJavaSource(parser);
+
+                RepositoryFieldWriter repositoryFieldWriter = new RepositoryFieldWriter(modelType, getTypeCollector().getByName(parser.getFullRepository()));
+                repositoryFieldWriter.writeTo(impJavaSource);
+
                 RepositoryBasedSupportMethodWriter writer = new RepositoryBasedSupportMethodWriter(methodMeta);
                 writer.writeTo(impJavaSource);
             }
@@ -74,11 +82,16 @@ public final class GenApplicationPlugin
             ModelBasedMethodMeta modelBasedMethodMeta = this.modelBasedMethodMetaParser.parse(modelType, getTypeCollector());
             if (parser.genIfc()){
                 JavaSource ifcJavaSource = createIfcJavaSource(parser);
+
                 ModelBasedApplicationMethodWriter writer = new ModelBasedApplicationMethodWriter(modelBasedMethodMeta);
                 writer.writeTo(ifcJavaSource);
             }
             if (parser.genImp()){
-                JavaSource impJavaSource = createSupportJavaSource(parser, modelType);
+                JavaSource impJavaSource = createSupportJavaSource(parser);
+
+                RepositoryFieldWriter repositoryFieldWriter = new RepositoryFieldWriter(modelType, getTypeCollector().getByName(parser.getFullRepository()));
+                repositoryFieldWriter.writeTo(impJavaSource);
+
                 ModelBasedSupportMethodWriter writer = new ModelBasedSupportMethodWriter(modelBasedMethodMeta);
                 writer.writeTo(impJavaSource);
             }
@@ -87,15 +100,13 @@ public final class GenApplicationPlugin
 
     }
 
-    private JavaSource createSupportJavaSource(GenApplicationAnnotationParser parser, TypeElement modelType) {
+    private JavaSource createSupportJavaSource(GenApplicationAnnotationParser parser) {
         JavaSource impJavaSource = getJavaSourceCollector().getByName(parser.getFullImplName());
         if (impJavaSource == null) {
             TypeBuilderFactory factory = new ApplicationSupportBuilderFactory(parser.getImpName(),
                     parser.genIfc(),
                     parser.getSuperClassName(),
                     parser.getFullIfcName(),
-                    modelType,
-                    getTypeCollector().getByName(parser.getFullRepositoryName()),
                     true);
             impJavaSource = new JavaSource(parser.getImpPkg(), parser.getImpName(), factory.create());
             getJavaSourceCollector().register(parser.getFullImplName(), impJavaSource);
@@ -108,7 +119,7 @@ public final class GenApplicationPlugin
         JavaSource ifcJavaSource = getJavaSourceCollector().getByName(parser.getFullIfcName());
         if (ifcJavaSource == null) {
             TypeSpec.Builder builder = new ApplicationBuilderFactory(parser.getIfcName()).create();
-            ifcJavaSource = new JavaSource(parser.getPkgName(), parser.getIfcName(), builder);
+            ifcJavaSource = new JavaSource(parser.getIfcPkgName(), parser.getIfcName(), builder);
             getJavaSourceCollector().register(parser.getFullIfcName(), ifcJavaSource);
 
         }

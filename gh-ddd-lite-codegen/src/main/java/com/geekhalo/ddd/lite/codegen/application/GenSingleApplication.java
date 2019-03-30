@@ -7,8 +7,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.SOURCE)
 @Inherited
 @Documented
-@Deprecated
-public @interface GenApplication {
+public @interface GenSingleApplication {
     String pkgName() default "";
     String interfaceName() default "";
     String implementName() default "";
