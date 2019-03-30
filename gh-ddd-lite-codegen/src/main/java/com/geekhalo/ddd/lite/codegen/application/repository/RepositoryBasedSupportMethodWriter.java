@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.application.repository;
 
 import com.geekhalo.ddd.lite.codegen.JavaSource;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerIgnore;
 import com.geekhalo.ddd.lite.codegen.support.MethodWriter;
 import com.squareup.javapoet.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -37,7 +38,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
         bindConverterMethod(javaSource);
         methodMeta.getQueryMethods().forEach(executableElement -> {
             {
-                MethodSpec method = createSupportMethod1(executableElement);
+                MethodSpec method = createSupportMethodWithConverter(executableElement);
                 if (method != null) {
                     javaSource.addMethod(method);
                 }
@@ -51,7 +52,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
         });
     }
 
-    private MethodSpec createSupportMethod1(ExecutableElement executableElement){
+    private MethodSpec createSupportMethodWithConverter(ExecutableElement executableElement){
         try {
             TypeMirror returnType = executableElement.getReturnType();
             TypeVariableName elementTypeName = TypeVariableName.get("T");
@@ -65,6 +66,7 @@ public final class RepositoryBasedSupportMethodWriter implements MethodWriter {
                     .addAnnotation(AnnotationSpec.builder(Transactional.class)
                             .addMember("readOnly", "true")
                             .build())
+                    .addAnnotation(GenControllerIgnore.class)
                     .returns(returnTypeName);
             bindDescription(executableElement, methodBuilder);
 

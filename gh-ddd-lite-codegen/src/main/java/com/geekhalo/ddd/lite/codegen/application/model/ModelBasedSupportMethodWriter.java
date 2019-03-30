@@ -63,7 +63,7 @@ public final class ModelBasedSupportMethodWriter implements MethodWriter {
         CodeBlock.Builder codeBuilder = CodeBlock.builder()
                 .add("\t$T result = creatorFor(this.$L())\n" +
                                 "            .publishBy(getDomainEventBus())\n" +
-                                "            .instance(() -> $T.$L($L))" +
+                                "            .instance(() -> $T.$L($L))\n" +
                                 "            .call(); \n",
                         TypeName.get(methodMeta.getModelType().asType()),
                         repositoryGetterName,

@@ -1,11 +1,13 @@
 package com.geekhalo.ddd.lite.codegen.controller.parser;
 
 import com.geekhalo.ddd.lite.codegen.TypeCollector;
+import com.geekhalo.ddd.lite.codegen.controller.GenControllerIgnore;
 import com.geekhalo.ddd.lite.codegen.controller.GenControllerMethodMeta;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -31,7 +33,11 @@ public final class GenControllerMethodMetaParser {
         if (typeElement == null){
             return;
         }
-        ElementFilter.methodsIn(typeElement.getEnclosedElements()).forEach(executableElement -> {
+        ElementFilter.methodsIn(typeElement.getEnclosedElements())
+                .stream()
+                .filter(element -> element.getModifiers().contains(Modifier.PUBLIC))
+                .filter(element -> element.getAnnotation(GenControllerIgnore.class) == null)
+                .forEach(executableElement -> {
             if (isCreateMethod(executableElement)){
                 methodMeta.addCreateMethod(executableElement);
             }else if (isUpdateMethod(executableElement)){
