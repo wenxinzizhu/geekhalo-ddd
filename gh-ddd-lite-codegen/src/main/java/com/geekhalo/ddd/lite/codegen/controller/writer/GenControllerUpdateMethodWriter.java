@@ -41,9 +41,8 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
                         .addMember("value", "\"{id}/_" + getPathFromMethod(methodName) +"\"")
-                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
         VariableElement idParam = getIdParam(executableElement.getExecutableElement());
         if (isLong(idParam)) {

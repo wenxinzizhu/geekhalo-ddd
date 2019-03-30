@@ -9,10 +9,7 @@ import com.geekhalo.ddd.lite.codegen.controller.request.CreateMethodRequestBodyP
 import com.geekhalo.ddd.lite.codegen.controller.request.RequestBodyInfo;
 import com.squareup.javapoet.*;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.lang.model.element.Modifier;
 import java.util.Arrays;
@@ -41,9 +38,8 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
                         .addMember("value", "\""+ descriptionStr +"\"")
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
-                .addAnnotation(AnnotationSpec.builder(RequestMapping.class)
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
                         .addMember("value", "\"/_" + getPathFromMethod(methodName) +"\"")
-                        .addMember("method", "$T.POST", ClassName.get(RequestMethod.class))
                         .build());
 
         RequestBodyInfo requestBodyInfo = new CreateMethodRequestBodyParser(getPkgName(), getBaseClassName())
