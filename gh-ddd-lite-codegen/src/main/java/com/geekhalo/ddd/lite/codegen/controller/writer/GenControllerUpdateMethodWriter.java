@@ -42,7 +42,7 @@ public final class GenControllerUpdateMethodWriter extends GenControllerMethodWr
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
                 .addAnnotation(AnnotationSpec.builder(PostMapping.class)
-                        .addMember("value", "\"{id}/_" + getPathFromMethod(methodName) +"\"")
+                        .addMember("value", "\"{id}/" + getPathFromMethod(methodName) +"\"")
                         .build());
         VariableElement idParam = getIdParam(executableElement.getExecutableElement());
         if (isLong(idParam)) {

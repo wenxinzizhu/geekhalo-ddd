@@ -5,7 +5,7 @@ public class PathUtils {
         StringBuilder stringBuilder = new StringBuilder();
         for (char c : methodName.toCharArray()){
             if (Character.isUpperCase(c)){
-                stringBuilder.append("_").append(Character.toLowerCase(c));
+                stringBuilder.append("-").append(Character.toLowerCase(c));
             }else {
                 stringBuilder.append(c);
             }

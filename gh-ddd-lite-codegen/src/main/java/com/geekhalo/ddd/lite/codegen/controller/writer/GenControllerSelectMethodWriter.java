@@ -58,7 +58,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
                 .addAnnotation(AnnotationSpec.builder(PostMapping.class)
-                        .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
+                        .addMember("value", "\"/"+ getPathFromMethod(methodName) + "\"")
                         .build());
 
         String returnType = executableElement.getReturnType().toString();
@@ -186,7 +186,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
                 .addAnnotation(AnnotationSpec.builder(PostMapping.class)
-                        .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
+                        .addMember("value", "\"/"+ getPathFromMethod(methodName) + "\"")
                         .build());
 
         if (getParser().isWrapper()){
@@ -243,7 +243,7 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
                 .addAnnotation(AnnotationSpec.builder(PostMapping.class)
-                        .addMember("value", "\"/_"+ getPathFromMethod(methodName) + "\"")
+                        .addMember("value", "\"/"+ getPathFromMethod(methodName) + "\"")
                         .build());
 
         ClassName type = ClassName.bestGuess(this.getTypeFromPage(executableElement.getReturnType().toString()));

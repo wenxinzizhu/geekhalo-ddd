@@ -39,7 +39,7 @@ public final class GenControllerCreateMethodWriter extends GenControllerMethodWr
                         .addMember("nickname","\"" + methodName + "\"")
                         .build())
                 .addAnnotation(AnnotationSpec.builder(PostMapping.class)
-                        .addMember("value", "\"/_" + getPathFromMethod(methodName) +"\"")
+                        .addMember("value", "\"/" + getPathFromMethod(methodName) +"\"")
                         .build());
 
         RequestBodyInfo requestBodyInfo = new CreateMethodRequestBodyParser(getPkgName(), getBaseClassName())
