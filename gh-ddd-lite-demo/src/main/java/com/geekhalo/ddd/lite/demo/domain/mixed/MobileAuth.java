@@ -8,7 +8,7 @@ import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
 @GenMixedApplication(implementName = "BaseAuthApplication")
 public class MobileAuth extends JpaAggregate {
 
-    @GenApplicationMethod(name = "createMobile")
+    @GenApplicationMethod(methodName = "createMobile")
     public static MobileAuth createMobileAuth(String mobile){
         return new MobileAuth();
     }

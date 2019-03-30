@@ -23,7 +23,7 @@ public class Utils {
     public static String getApplicationMethodName(ExecutableElement element){
 
         return Optional.ofNullable(element.getAnnotation(GenApplicationMethod.class))
-                .map(GenApplicationMethod::name)
+                .map(GenApplicationMethod::methodName)
                 .filter(StringUtils::isNotEmpty)
                 .orElseGet(()-> element.getSimpleName().toString());
     }

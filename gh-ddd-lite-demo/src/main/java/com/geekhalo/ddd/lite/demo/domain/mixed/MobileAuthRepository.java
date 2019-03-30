@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @GenMixedApplication(implementName = "BaseAuthApplication")
 public interface MobileAuthRepository extends BaseMobileAuthRepository{
-    @GenApplicationMethod(name = "getMobileById")
+    @GenApplicationMethod(methodName = "getMobileById")
     @Override
     Optional<MobileAuth> getById(Long aLong);
 }

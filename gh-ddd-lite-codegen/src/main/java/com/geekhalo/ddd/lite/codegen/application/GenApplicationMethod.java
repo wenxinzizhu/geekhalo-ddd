@@ -7,5 +7,5 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface GenApplicationMethod {
-    String name() default "";
+    String methodName() default "";
 }

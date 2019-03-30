@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @GenMixedApplication(implementName = "BaseAuthApplication")
 public interface EmailAuthRepository extends BaseEmailAuthRepository{
-    @GenApplicationMethod(name = "getEmailById")
+    @GenApplicationMethod(methodName = "getEmailById")
     @Override
     Optional<EmailAuth> getById(Long aLong);
 

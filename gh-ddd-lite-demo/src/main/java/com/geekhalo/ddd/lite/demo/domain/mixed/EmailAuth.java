@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 @GenMixedApplication(implementName = "BaseAuthApplication")
 public class EmailAuth extends JpaAggregate {
 
-    @GenApplicationMethod(name = "createEmail")
+    @GenApplicationMethod(methodName = "createEmail")
     public static EmailAuth create(String email){
         return new EmailAuth();
     }
