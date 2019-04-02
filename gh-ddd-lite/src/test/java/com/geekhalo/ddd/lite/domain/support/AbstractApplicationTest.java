@@ -188,7 +188,7 @@ public class AbstractApplicationTest {
         }
     }
 
-    class NameUpdatedEvent extends AbstractDomainEvent<Long, TestAgg> implements DomainEvent<Long, TestAgg> {
+    class NameUpdatedEvent extends AbstractAggregateEvent<Long, TestAgg> {
         private final String oldValue;
         private final String newValue;
 

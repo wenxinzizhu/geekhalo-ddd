@@ -121,6 +121,7 @@ public abstract class AbstractApplication implements Application {
 
                 if (this.eventPublisher != null){
                     this.eventPublisher.publishAll(a.getEvents());
+                    a.cleanEvents();
                 }
 
                 this.successFun.accept(a);
@@ -235,6 +236,7 @@ public abstract class AbstractApplication implements Application {
 
                 if (domainEventPublisher != null){
                     domainEventPublisher.publishAll(a.getEvents());
+                    a.cleanEvents();
                 }
 
                 this.successFun.accept(new Data(id, a));
@@ -352,6 +354,7 @@ public abstract class AbstractApplication implements Application {
 
                     if (this.eventPublisher != null){
                         eventPublisher.publishAll(a.getEvents());
+                        a.cleanEvents();
                     }
 
                     this.successFun.accept(new Data(a.getId(), Action.CREATE, a));
@@ -371,6 +374,7 @@ public abstract class AbstractApplication implements Application {
 
                     if (this.eventPublisher != null){
                         eventPublisher.publishAll(a.getEvents());
+                        a.cleanEvents();
                     }
 
                     this.successFun.accept(new Data(a.getId(), Action.UPDATE, a));
