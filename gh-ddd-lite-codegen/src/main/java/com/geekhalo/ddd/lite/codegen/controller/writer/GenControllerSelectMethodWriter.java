@@ -64,8 +64,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         String returnType = executableElement.getReturnType().toString();
         RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                 .parseForMethod(executableElement.getExecutableElement());
-        requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
+
         if (requestBodyInfo != null){
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                     .addAnnotation(RequestBody.class)
                     .build());
@@ -194,8 +195,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             if (requestBodyInfo != null) {
+                requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());
@@ -213,8 +214,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
+
             if (requestBodyInfo != null) {
+                requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());
@@ -255,8 +257,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
+
             if (requestBodyInfo != null) {
+                requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());
@@ -276,8 +279,9 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
 
             RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                     .parseForMethod(executableElement.getExecutableElement());
-            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
+
             if (requestBodyInfo != null) {
+                requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
                 methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                         .addAnnotation(RequestBody.class)
                         .build());

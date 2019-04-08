@@ -35,15 +35,4 @@ public abstract class AbstractDomainEvent implements DomainEvent {
         return this.createTime;
     }
 
-    //    private final A source;
-//
-//    public AbstractDomainEvent(A source) {
-//        Preconditions.checkArgument(source != null);
-//        this.source = source;
-//    }
-//
-//    @Override
-//    public A getSource() {
-//        return source;
-//    }
 }
