@@ -8,10 +8,7 @@ import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoGetterMeta;
 import com.geekhalo.ddd.lite.codegen.dto.support.meta.DtoMeta;
 import com.geekhalo.ddd.lite.codegen.dto.support.parser.DtoMetaParser;
 import com.geekhalo.ddd.lite.codegen.dto.support.writer.*;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,7 +44,13 @@ public class GenDtoPlugin extends AbstractProcessorPlugin {
 
         if (StringUtils.isNotEmpty(parentClassName)){
             ClassName parent = ClassName.bestGuess(parentClassName);
-            typeSpecBuilder.superclass(parent);
+            if (StringUtils.isNotEmpty(parser.getIdType())){
+                TypeName typeName = TypeVariableName.get(parser.getIdType());
+                ParameterizedTypeName parameterizedTypeName = ParameterizedTypeName.get(parent, typeName);
+                typeSpecBuilder.superclass(parameterizedTypeName);
+            }else {
+                typeSpecBuilder.superclass(parent);
+            }
         }
 
 
