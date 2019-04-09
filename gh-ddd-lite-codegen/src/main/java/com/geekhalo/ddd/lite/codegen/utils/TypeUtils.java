@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.codegen.utils;
 
 import com.geekhalo.ddd.lite.codegen.Description;
+import com.geekhalo.ddd.lite.domain.Aggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaAggregate;
 import com.geekhalo.ddd.lite.domain.support.jpa.IdentitiedJpaEntity;
 import com.geekhalo.ddd.lite.domain.support.jpa.JpaAggregate;
@@ -11,6 +12,7 @@ import com.geekhalo.ddd.lite.domain.support.mongo.MongoAggregate;
 import com.geekhalo.ddd.lite.domain.support.mongo.MongoEntity;
 import com.google.common.collect.Lists;
 import com.squareup.javapoet.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
@@ -147,6 +149,16 @@ public class TypeUtils {
         }
         if (parentCls.startsWith(IdentitiedMongoEntity.class.getName())){
             return getIdClassFrom(parentCls);
+        }
+        for (TypeMirror itfType : typeElement.getInterfaces()){
+            String type = itfType.toString();
+            if (type.startsWith(Aggregate.class.getName())){
+                String s = type.substring(Aggregate.class.getName().length() + 1);
+                s = s.substring(0, s.length() - 1);
+                if (StringUtils.isNotEmpty(s)){
+                    return s;
+                }
+            }
         }
         return null;
     }

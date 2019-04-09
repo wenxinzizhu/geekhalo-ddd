@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.geekhalo.ddd.lite.codegen.controller.writer.PathUtils.getPathFromMethod;
@@ -42,7 +41,8 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         }else if (isOptionalMethod(executableElement.getExecutableElement())){
             writeOptionalMethod(executableElement, javaSource);
         }else {
-            LOGGER.warn("failed to write method for {}", executableElement.getMethodName());
+            LOGGER.warn("failed to write method for {}, try to use other method", executableElement.getMethodName());
+            writeOtherSelectMethod(executableElement, javaSource);
         }
     }
 
@@ -65,32 +65,40 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
         RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
                 .parseForMethod(executableElement.getExecutableElement());
 
-        if (requestBodyInfo != null){
+        String paramStr = "";
+        if (requestBodyInfo != null) {
             requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
             methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
                     .addAnnotation(RequestBody.class)
                     .build());
+            paramStr = createParamListStr(requestBodyInfo.getCallParams());
+        }
+        if (getParser().isWrapper()) {
             if (isOptionalMethod(executableElement.getExecutableElement())) {
-                methodBuilder.addStatement("return this.getApplication().$L($L).orElse(null)",
+                methodBuilder.addStatement("return $T.success(this.getApplication().$L($L).orElse(null))",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
                         methodName,
-                        createParamListStr(requestBodyInfo.getCallParams()));
+                        paramStr);
                 String type = getTypeFromOptional(returnType);
-                methodBuilder.returns(ClassName.bestGuess(type));
-            }else {
-                methodBuilder.addStatement("return this.getApplication().$L($L)",
+                methodBuilder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), ClassName.bestGuess(type)) );
+            } else {
+                methodBuilder.addStatement("return $T.success(this.getApplication().$L($L))",
+                        ClassName.bestGuess(getParser().getWrapperCls()),
                         methodName,
-                        createParamListStr(requestBodyInfo.getCallParams()));
-                methodBuilder.returns(TypeName.get(executableElement.getReturnType()));
+                        paramStr);
+                methodBuilder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())) );
             }
         }else {
             if (isOptionalMethod(executableElement.getExecutableElement())) {
-                methodBuilder.addStatement("return this.getApplication().$L().orElse(null)",
-                        methodName);
+                methodBuilder.addStatement("return this.getApplication().$L($L).orElse(null)",
+                        methodName,
+                        paramStr);
                 String type = getTypeFromOptional(returnType);
                 methodBuilder.returns(ClassName.bestGuess(type));
-            }else {
-                methodBuilder.addStatement("return this.getApplication().$L()",
-                        methodName);
+            } else {
+                methodBuilder.addStatement("return this.getApplication().$L($L)",
+                        methodName,
+                        paramStr);
                 methodBuilder.returns(TypeName.get(executableElement.getReturnType()));
             }
         }
@@ -286,14 +294,57 @@ public final class GenControllerSelectMethodWriter extends GenControllerMethodWr
                         .addAnnotation(RequestBody.class)
                         .build());
                 methodBuilder.addStatement("return $T.apply(this.getApplication().$L($L))",
-                        pageVoType,
+                        pageVoClass,
                         methodName,
                         createParamListStr(requestBodyInfo.getCallParams()));
             } else {
                 methodBuilder.addStatement("return $T.apply(this.getApplication().$L())",
-                        pageVoType,
+                        pageVoClass,
                         methodName);
             }
+        }
+        javaSource.addMethod(methodBuilder.build());
+    }
+
+
+    private void writeOtherSelectMethod(GenControllerMethodMeta.MethodMeta executableElement, JavaSource javaSource) {
+        String methodName = executableElement.getMethodName();
+        Description description = executableElement.getDescription();
+        String descriptionStr = description != null ? description.value() : "";
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(ResponseBody.class)
+                .addAnnotation(AnnotationSpec.builder(ApiOperation.class)
+                        .addMember("value", "\""+ descriptionStr +"\"")
+                        .addMember("nickname","\"" + methodName + "\"")
+                        .build())
+                .addAnnotation(AnnotationSpec.builder(PostMapping.class)
+                        .addMember("value", "\"/"+ getPathFromMethod(methodName) + "\"")
+                        .build());
+
+        String returnType = executableElement.getReturnType().toString();
+        RequestBodyInfo requestBodyInfo = new SelectMethodRequestBodyParser(getPkgName(), getBaseClassName())
+                .parseForMethod(executableElement.getExecutableElement());
+
+        String paramStr = "";
+        if (requestBodyInfo != null) {
+            requestBodyInfo.getBodyType().forEach(innerBuilder -> javaSource.addType(innerBuilder.build()));
+            methodBuilder.addParameter(ParameterSpec.builder(requestBodyInfo.getParameterType(), requestBodyInfo.getParameterName())
+                    .addAnnotation(RequestBody.class)
+                    .build());
+            paramStr = createParamListStr(requestBodyInfo.getCallParams());
+        }
+        if (getParser().isWrapper()) {
+            methodBuilder.addStatement("return $T.success(this.getApplication().$L($L))",
+                    ClassName.bestGuess(getParser().getWrapperCls()),
+                    methodName,
+                    paramStr);
+            methodBuilder.returns(ParameterizedTypeName.get(ClassName.bestGuess(getParser().getWrapperCls()), TypeName.get(executableElement.getReturnType())) );
+        }else {
+            methodBuilder.addStatement("return this.getApplication().$L($L)",
+                    methodName,
+                    paramStr);
+            methodBuilder.returns(TypeName.get(executableElement.getReturnType()));
         }
         javaSource.addMethod(methodBuilder.build());
     }

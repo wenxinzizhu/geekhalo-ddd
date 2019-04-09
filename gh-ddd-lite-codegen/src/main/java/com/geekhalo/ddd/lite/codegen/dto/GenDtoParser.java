@@ -21,6 +21,7 @@ public final class GenDtoParser {
     private String className;
     private String packageName;
     private String parentClassName;
+    private boolean useIdType = true;
     private String idType;
 
     public GenDtoParser(TypeElement typeElement) {
@@ -44,6 +45,7 @@ public final class GenDtoParser {
         this.className = "Base" + element.getSimpleName().toString() + "Dto";
         this.packageName = element.getEnclosingElement().toString();
         this.parentClassName = AbstractEntityDto.class.getName();
+        this.useIdType = true;
         this.idType = TypeUtils.getIdClassName(element);
     }
 
@@ -51,6 +53,7 @@ public final class GenDtoParser {
         this.className = "Base" + element.getSimpleName().toString() + "Dto";
         this.packageName = element.getEnclosingElement().toString();
         this.parentClassName = AbstractAggregateDto.class.getName();
+        this.useIdType = true;
         this.idType = TypeUtils.getIdClassName(element);
     }
 
@@ -65,6 +68,7 @@ public final class GenDtoParser {
         if (StringUtils.isNotEmpty(genDto.parent())){
             this.parentClassName = genDto.parent();
         }
+        this.useIdType = genDto.useIdType();
         this.idType = TypeUtils.getIdClassName(this.element);
     }
 

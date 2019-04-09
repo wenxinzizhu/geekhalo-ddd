@@ -11,5 +11,7 @@ import java.lang.annotation.*;
 public @interface GenDto {
     String pkgName() default "";
 
+    boolean useIdType() default true;
+
     String parent() default DtoConstants.JPA_AGG_VO;
 }

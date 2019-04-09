@@ -44,7 +44,7 @@ public class GenDtoPlugin extends AbstractProcessorPlugin {
 
         if (StringUtils.isNotEmpty(parentClassName)){
             ClassName parent = ClassName.bestGuess(parentClassName);
-            if (StringUtils.isNotEmpty(parser.getIdType())){
+            if (parser.isUseIdType() && StringUtils.isNotEmpty(parser.getIdType())){
                 TypeName typeName = TypeVariableName.get(parser.getIdType());
                 ParameterizedTypeName parameterizedTypeName = ParameterizedTypeName.get(parent, typeName);
                 typeSpecBuilder.superclass(parameterizedTypeName);
