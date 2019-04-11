@@ -9,9 +9,9 @@ public interface DomainEvent {
 
     String id();
 
-    default String getId(){
-        return id();
-    }
+//    default String getId(){
+//        return id();
+//    }
 
     Date occurredOn();
 
