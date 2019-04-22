@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.lang.annotation.Annotation;
 
 
@@ -61,7 +62,10 @@ public final class GenCodeBasedEnumConverterPlugin
 
         return TypeSpec.classBuilder(className)
                 .addSuperinterface(attributeConverter)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addAnnotation(AnnotationSpec.builder(Converter.class)
+                        .addMember("autoApply", "true")
+                        .build());
     }
 
     private String createClassName(TypeElement typeElement) {
