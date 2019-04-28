@@ -1,6 +1,7 @@
 package com.geekhalo.ddd.lite.spring.mvc;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Api
+@ApiModel
 @Data
 public class PageVo<T> {
     @ApiModelProperty("页码")
